@@ -578,5 +578,6 @@ inline void print_line (FILE * file)
 #undef catch
 #undef cat
 #undef declare
+#undef stack
 
 #define ANOTHER_STACK
