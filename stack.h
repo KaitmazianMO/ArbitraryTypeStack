@@ -1,6 +1,8 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+
+#ifndef ANOTHER_STACK
 
 static FILE *LOG_FILE_PTR = NULL;
 
@@ -8,16 +10,17 @@ static FILE *LOG_FILE_PTR = NULL;
 const char *LOG_FILE_NAME = "LogStack.txt";
 #endif
 
-static const long long CHIRP = 0xAEAEAAEAAE;
+typedef long long canary_t;
+static const canary_t CHIRP = 0xAEAEAAEAAEAE;
 
-static stack_t POISON = 0;
+#define POISON  0
+
+#endif
 
 
 #define cat(stack, separator, type)  stack##separator##type
 #define declare(stack_, type) cat (stack_, _, type)
 #define stack declare (stack, stack_t)
-
-typedef long long canary_t;
 
 struct stack
     {
@@ -32,6 +35,8 @@ struct stack
 
     canary_t endCanary;
     };
+
+#ifndef ANOTHER_STACK
 
 enum errors
     {
@@ -57,61 +62,36 @@ enum errors
     POISON_ERROR        = 47,
     };
 
+#endif
 //-----------------------------------------------------------------------------
 
-stack   *NewStack         (int new_capasity = 0);
-int      StackPush        (stack *stack_ptr, stack_t value);
-stack_t  StackPeek        (stack *stack_ptr);
-stack_t  StackPop         (stack *stack_ptr);
-int      StackClear       (stack *stack_ptr);
-size_t   StackSize        (stack *stack_ptr);
-size_t   StackCapacity    (stack *stack_ptr);
-stack   *DellStack        (stack *stack_ptr);
+stack   *declare(new_stack, stack_t)
+                             (int new_capasity = 0);
+int      stack_push          (stack *stack_ptr, stack_t value);
+stack_t  stack_peek          (stack *stack_ptr);
+stack_t  stack_pop           (stack *stack_ptr);
+int      stack_clear         (stack *stack_ptr);
+size_t   stack_size          (stack *stack_ptr);
+size_t   stack_capacity      (stack *stack_ptr);
+stack   *dell_stack          (stack *stack_ptr);
 
-stack_t *StackFreeData    (stack *stack_ptr);
-int      StackResize      (stack *stack_ptr, int new_capacity, int size_value);
-void     AddPoison        (stack *stack_ptr);
-int      StackConstruct   (stack *stack_ptr, int new_capacity);
+stack_t *stack_free_data     (stack *stack_ptr);
+int      stack_resize        (stack *stack_ptr, int new_capacity, int size_value);
+void     add_poison          (stack *stack_ptr);
+int      stack_construct     (stack *stack_ptr, int new_capacity);
 
-int      GetStackHash     (stack *stack_ptr);
-int      GetStackDataHash (stack *stack_ptr);
-int      PoisonError      (stack *stack_ptr);
-int      StackError       (stack *stack_ptr);
-int      CanaryError      (stack *stack_ptr);
-int      HashError        (stack *stack_ptr);
-int      StackVerify      (stack *stack_ptr);
+int      get_stack_hash      (stack *stack_ptr);
+int      get_stack_data_hash (stack *stack_ptr);
+int      poison_error        (stack *stack_ptr);
+int      stack_error         (stack *stack_ptr);
+int      canary_error        (stack *stack_ptr);
+int      hash_error          (stack *stack_ptr);
+int      stack_verify        (stack *stack_ptr);
 
-const char *strError     (int error);
+const char *str_error     (int error);
 
-inline void PrintLine    (FILE * file);
-bool        isDead       (canary_t canary);
-
-//-----------------------------------------------------------------------------
-
-#define Is(err_num)  if(error == err_num) return #err_num;
-                                                                   
-inline const char *strError (int error)                              
-    {
-    Is (NULL_STACK_PTR)
-    Is (NULL_STACK_DATA_PTR)
-    Is (NEGATIVE_CAPACITY)
-    Is (NEGATIVE_SIZE)
-    Is (CAPACITY_LESS_THAN_SIZE)
-    Is (BEGINS_STACK_CANARY_IS_DEAD)
-    Is (ENDS_STACK_CANARY_IS_DEAD)
-    Is (BEGINS_DATA_CANARY_IS_DEAD)
-    Is (STACK_HASH_ERROR)
-    Is (STACK_DATA_HASH_ERROR)
-    Is (POISON_ERROR)
-    Is (REALLOCATION_ERROR)
-    Is (CONSTRUCTING_ERROR)
-    Is (POPPING_EMPTY_STACK)
-    Is (PEEKING_EMPTY_STACK)
-    Is (WRONG_PUSHUNG_VALUE)
-    Is (NEGATIVE_VALUE_SIZE)
-    Is (POISON_ERROR)       
-    return NULL;
-    }
+inline void print_line    (FILE * file);
+bool        is_dead       (canary_t canary);
 
 //-----------------------------------------------------------------------------
 #ifndef NO_DBG
@@ -120,8 +100,8 @@ inline const char *strError (int error)
         {                                                                               \
         if (LOG_FILE_PTR == NULL)                                                       \
             LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w+");                                 \
-        const char *str_err = strError (error);                                         \
-        PrintLine (LOG_FILE_PTR);                                                       \
+        const char *str_err = str_error (error);                                         \
+        print_line (LOG_FILE_PTR);                                                       \
         fprintf (LOG_FILE_PTR, "Stack (ERROR %d: %s) [%p] \n\n"                         \
                           "Function: %s\n\n", error, str_err,                           \
                                               stack_ptr, __func__);                     \
@@ -130,7 +110,7 @@ inline const char *strError (int error)
                 "\n\n>>>You can find log information in file: %s\n\n", LOG_FILE_NAME);  \
                                                                                         \
         fflush    (LOG_FILE_PTR);                                                       \
-        PrintLine (LOG_FILE_PTR);                                                       \
+        print_line (LOG_FILE_PTR);                                                       \
                                                                                         \
         abort ();                                                                       \
         }
@@ -141,15 +121,15 @@ inline const char *strError (int error)
 
 //-----------------------------------------------------------------------------
 
-#define SetHashes(stack_ptr)  stack_ptr->stack_hash      = GetStackHash     (stack_ptr);   \
-                              stack_ptr->stack_data_hash = GetStackDataHash (stack_ptr);   
+#define SetHashes(stack_ptr)  stack_ptr->stack_hash      = get_stack_hash     (stack_ptr);   \
+                              stack_ptr->stack_data_hash = get_stack_data_hash (stack_ptr);   
 
-#define StartVerify  Verify (StackError  (stack_ptr))\
-                     Verify (CanaryError (stack_ptr))\
-                     Verify (HashError   (stack_ptr))
+#define StartVerify  Verify (stack_error  (stack_ptr))\
+                     Verify (canary_error (stack_ptr))\
+                     Verify (hash_error   (stack_ptr))
 
-#define EndVerify    Verify (StackError  (stack_ptr))\
-                     Verify (CanaryError (stack_ptr))\
+#define EndVerify    Verify (stack_error  (stack_ptr))\
+                     Verify (canary_error (stack_ptr))\
                      SetHashes           (stack_ptr)
    
 //-----------------------------------------------------------------------------
@@ -184,7 +164,7 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
     {                                                                                            \
     if (LOG_FILE_PTR == NULL)                                                                    \
             LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w+");                                          \
-    PrintLine (LOG_FILE_PTR);                                                                    \
+    print_line (LOG_FILE_PTR);                                                                    \
                                                                                                  \
     fprintf (LOG_FILE_PTR, "Stack (OK) [%p] \n\n"                                                \
                       "Function: %s\n\n" , stack_ptr, __FUNCSIG__) ;                             \
@@ -209,7 +189,7 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
         }                                                                                        \
     fprintf (LOG_FILE_PTR, "\t}\n}\n");                                                          \
                                                                                                  \
-    PrintLine (LOG_FILE_PTR);                                                                    \
+    print_line (LOG_FILE_PTR);                                                                    \
     fflush    (LOG_FILE_PTR);                                                                    \
     }
 #else
@@ -218,11 +198,11 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
 
 //-----------------------------------------------------------------------------
 
-stack *NewStack(int capasity)
+stack *declare(new_stack, stack_t) (int capasity)
     {
     stack *stack_ptr = (stack *)calloc (1, sizeof (*stack_ptr)); 
 
-    int err_num = StackConstruct (stack_ptr, capasity);
+    int err_num = stack_construct (stack_ptr, capasity);
     
     if (err_num != 0) return NULL;
                                    
@@ -234,7 +214,7 @@ stack *NewStack(int capasity)
 
 //-----------------------------------------------------------------------------
 
-int StackConstruct (stack *stack_ptr, int capacity)
+int stack_construct (stack *stack_ptr, int capacity)
     {
     if (capacity < 0) return NEGATIVE_CAPACITY;
 
@@ -254,7 +234,7 @@ int StackConstruct (stack *stack_ptr, int capacity)
     stack_ptr->capacity = capacity;
     stack_ptr->size     = 0;
 
-    AddPoison (stack_ptr);
+    add_poison (stack_ptr);
     SetHashes (stack_ptr)
 
     return 0;
@@ -262,7 +242,7 @@ int StackConstruct (stack *stack_ptr, int capacity)
 
 //-----------------------------------------------------------------------------
 
-int StackPush (stack *stack_ptr, stack_t value)
+int stack_push (stack *stack_ptr, stack_t value)
     {
     StartVerify
     StackDump
@@ -272,7 +252,7 @@ int StackPush (stack *stack_ptr, stack_t value)
     int error = 0;
 
     if (stack_ptr->size == stack_ptr->capacity)
-        error = StackResize (stack_ptr, stack_ptr->capacity * 2 + 1,
+        error = stack_resize (stack_ptr, stack_ptr->capacity * 2 + 1,
                                         sizeof (*stack_ptr->data));
     if ( !error )
         *(stack_ptr->data + stack_ptr->size++) = value;
@@ -285,7 +265,7 @@ int StackPush (stack *stack_ptr, stack_t value)
 
 //-----------------------------------------------------------------------------
 
-stack_t StackPop (stack *stack_ptr)
+stack_t stack_pop (stack *stack_ptr)
     {
     StartVerify
     StackDump
@@ -294,7 +274,7 @@ stack_t StackPop (stack *stack_ptr)
         return 0;
 
     if (stack_ptr->capacity > 4 * stack_ptr->size)
-        StackResize (stack_ptr, stack_ptr->size * 2 + 1, sizeof(stack_t));
+        stack_resize (stack_ptr, stack_ptr->size * 2 + 1, sizeof(stack_t));
 
     int value = *(stack_ptr->data + --stack_ptr->size);
 
@@ -308,16 +288,14 @@ stack_t StackPop (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-stack_t StackPeek (stack *stack_ptr)
+stack_t stack_peek (stack *stack_ptr)
     {
     StartVerify
     StackDump
 
     if (stack_ptr->size == 0)
-       {
-       errno = PEEKING_EMPTY_STACK;
-       return 0;
-       }
+       return POISON;
+
 
     EndVerify
     StackDump
@@ -327,7 +305,7 @@ stack_t StackPeek (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int StackResize (stack *stack_ptr, int new_capacity, int size_value)
+int stack_resize (stack *stack_ptr, int new_capacity, int size_value)
     {
     StartVerify
     StackDump
@@ -354,7 +332,7 @@ int StackResize (stack *stack_ptr, int new_capacity, int size_value)
 
         *((canary_t *)stack_ptr->data - 1)              = CHIRP; 
         *((canary_t *)(stack_ptr->data + new_capacity)) = CHIRP;
-        AddPoison (stack_ptr);
+        add_poison (stack_ptr);
         }
 
     EndVerify
@@ -365,7 +343,7 @@ int StackResize (stack *stack_ptr, int new_capacity, int size_value)
 
 //-----------------------------------------------------------------------------
 
-int StackClear (stack *stack_ptr)
+int stack_clear (stack *stack_ptr)
     {
     StartVerify
     StackDump
@@ -374,7 +352,7 @@ int StackClear (stack *stack_ptr)
         *(stack_ptr->data + i) = 0;
 
     stack_ptr->size = 0;
-    StackResize (stack_ptr, 0, sizeof (stack_t));
+    stack_resize (stack_ptr, 0, sizeof (stack_t));
 
     EndVerify
     StackDump
@@ -384,11 +362,11 @@ int StackClear (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-stack *DellStack (stack *stack_ptr)
+stack *dell_stack (stack *stack_ptr)
     {
     StartVerify
     
-    stack_ptr->data = StackFreeData (stack_ptr);
+    stack_ptr->data = stack_free_data (stack_ptr);
 
     free (stack_ptr);
 
@@ -398,7 +376,7 @@ stack *DellStack (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-stack_t *StackFreeData (stack *stack_ptr)
+stack_t *stack_free_data (stack *stack_ptr)
     {
     free (stack_ptr->data - 1);
     stack_ptr->data = NULL;
@@ -408,7 +386,7 @@ stack_t *StackFreeData (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-void AddPoison (stack *stack_ptr)
+void add_poison (stack *stack_ptr)
     {
     for (int i = stack_ptr->size; i < stack_ptr->capacity; ++i)
         *(stack_ptr->data + i) = POISON;
@@ -416,7 +394,7 @@ void AddPoison (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-size_t StackSize (stack *stack_ptr)
+size_t stack_size (stack *stack_ptr)
     {
     StartVerify
 
@@ -425,7 +403,7 @@ size_t StackSize (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-size_t StackCapacity (stack *stack_ptr)
+size_t stack_capacity (stack *stack_ptr)
     {
     StartVerify
 
@@ -434,7 +412,7 @@ size_t StackCapacity (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int GetStackHash (stack *stack_ptr)
+int get_stack_hash (stack *stack_ptr)
     {
     int old_stack_hash      = stack_ptr->stack_hash;
     int old_stack_data_hash = stack_ptr->stack_data_hash;
@@ -457,7 +435,7 @@ int GetStackHash (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int GetStackDataHash (stack *stack_ptr)
+int get_stack_data_hash (stack *stack_ptr)
     {
     int new_stack_data_hash = 0;
     stack_t *hash_ptr = stack_ptr->data;
@@ -471,17 +449,17 @@ int GetStackDataHash (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int StackHashError (stack *stack_ptr)
+int Stackhash_error (stack *stack_ptr)
     {
-    if (stack_ptr->stack_hash != GetStackHash (stack_ptr))
+    if (stack_ptr->stack_hash != get_stack_hash (stack_ptr))
         return STACK_HASH_ERROR;
 
     return 0;
     }
 
-int StackDataHashError (stack *stack_ptr)
+int StackDatahash_error (stack *stack_ptr)
     {
-    if (stack_ptr->stack_data_hash != GetStackDataHash (stack_ptr))
+    if (stack_ptr->stack_data_hash != get_stack_data_hash (stack_ptr))
         return STACK_DATA_HASH_ERROR;
 
     return 0;
@@ -492,20 +470,20 @@ int StackDataHashError (stack *stack_ptr)
 #define catch(condition, err_num) if (condition) return err_num;
 
 
-int StackVerify (stack *stack_ptr)
+int stack_verify (stack *stack_ptr)
     {  
     int err_num = 0;
 
-    if (err_num = StackError  (stack_ptr)) return err_num;
+    if (err_num = stack_error  (stack_ptr)) return err_num;
 
-    if (err_num = CanaryError (stack_ptr)) return err_num;
+    if (err_num = canary_error (stack_ptr)) return err_num;
                                                            
-    if (err_num = HashError   (stack_ptr)) return err_num;
+    if (err_num = hash_error   (stack_ptr)) return err_num;
 
     return 0;
     }
 
-int StackError (stack *stack_ptr)
+int stack_error (stack *stack_ptr)
     {
     catch (stack_ptr           == NULL, NULL_STACK_PTR         ); 
     catch (stack_ptr->data     == NULL, NULL_STACK_DATA_PTR    ); 
@@ -513,29 +491,29 @@ int StackError (stack *stack_ptr)
     catch (stack_ptr->size     <  0,    NEGATIVE_SIZE          ); 
     catch (stack_ptr->capacity <                                               
            stack_ptr->size,             CAPACITY_LESS_THAN_SIZE);
-    catch (PoisonError (stack_ptr)    , POISON_ERROR           );
+    catch (poison_error (stack_ptr)    , POISON_ERROR           );
     return 0;
     }
 
-int CanaryError (stack *stack_ptr)
+int canary_error (stack *stack_ptr)
     {
-    catch (isDead   (stack_ptr->beginCanary), BEGINS_STACK_CANARY_IS_DEAD); 
-    catch (isDead   (stack_ptr->endCanary),   ENDS_STACK_CANARY_IS_DEAD  );
+    catch (is_dead   (stack_ptr->beginCanary), BEGINS_STACK_CANARY_IS_DEAD); 
+    catch (is_dead   (stack_ptr->endCanary),   ENDS_STACK_CANARY_IS_DEAD  );
 
-    catch (isDead (*((canary_t *)stack_ptr->data - 1)), BEGINS_DATA_CANARY_IS_DEAD ); 
-    catch (isDead (*(canary_t *)(stack_ptr->data +                                              
+    catch (is_dead (*((canary_t *)stack_ptr->data - 1)), BEGINS_DATA_CANARY_IS_DEAD ); 
+    catch (is_dead (*(canary_t *)(stack_ptr->data +                                              
                        stack_ptr->capacity)),       BEGINS_DATA_CANARY_IS_DEAD );
     return 0;
     }
 
-int HashError (stack *stack_ptr)
+int hash_error (stack *stack_ptr)
     {
-    catch (StackHashError     (stack_ptr), STACK_HASH_ERROR     );
-    catch (StackDataHashError (stack_ptr), STACK_DATA_HASH_ERROR);
+    catch (Stackhash_error     (stack_ptr), STACK_HASH_ERROR     );
+    catch (StackDatahash_error (stack_ptr), STACK_DATA_HASH_ERROR);
     return 0;
     }
 
-int PoisonError (stack *stack_ptr)
+int poison_error (stack *stack_ptr)
     {
     for (int i = stack_ptr->size; i < stack_ptr->capacity; ++i)
         if (*(stack_ptr->data + i) != POISON)
@@ -546,14 +524,40 @@ int PoisonError (stack *stack_ptr)
 
 
 
+#ifndef ANOTHER_STACK
 
+#define Is(err_num)  if(error == err_num) return #err_num;
+                                                                   
+inline const char *str_error (int error)                              
+    {
+    Is (NULL_STACK_PTR)
+    Is (NULL_STACK_DATA_PTR)
+    Is (NEGATIVE_CAPACITY)
+    Is (NEGATIVE_SIZE)
+    Is (CAPACITY_LESS_THAN_SIZE)
+    Is (BEGINS_STACK_CANARY_IS_DEAD)
+    Is (ENDS_STACK_CANARY_IS_DEAD)
+    Is (BEGINS_DATA_CANARY_IS_DEAD)
+    Is (STACK_HASH_ERROR)
+    Is (STACK_DATA_HASH_ERROR)
+    Is (POISON_ERROR)
+    Is (REALLOCATION_ERROR)
+    Is (CONSTRUCTING_ERROR)
+    Is (POPPING_EMPTY_STACK)
+    Is (PEEKING_EMPTY_STACK)
+    Is (WRONG_PUSHUNG_VALUE)
+    Is (NEGATIVE_VALUE_SIZE)
+    Is (POISON_ERROR)       
+    return NULL;
+    }
+#undef Is
 
-bool isDead (canary_t canary)
+bool is_dead (canary_t canary)
     {
     return (canary != CHIRP) ? true : false;
     }
 
-inline void PrintLine(FILE * file)
+inline void print_line(FILE * file)
     {
     if (file == NULL) return;
     fputs ("\n", file);
@@ -563,7 +567,11 @@ inline void PrintLine(FILE * file)
 
     fputs ("\n", file);
     }
+
+#endif
     
 #undef catch
 #undef cat
 #undef declare
+
+#define ANOTHER_STACK
