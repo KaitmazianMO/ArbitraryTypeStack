@@ -17,7 +17,6 @@ static const canary_t CHIRP = 0xAEAEAAEAAEAE;
 
 #endif
 
-
 #define cat(stack, separator, type)  stack##separator##type
 #define declare(stack_, type) cat (stack_, _, type)
 #define stack declare (stack, stack_t)
@@ -63,6 +62,7 @@ enum errors
     };
 
 #endif
+
 //-----------------------------------------------------------------------------
 
 stack   *declare(new_stack, stack_t)
@@ -93,7 +93,10 @@ const char *str_error     (int error);
 inline void print_line    (FILE * file);
 bool        is_dead       (canary_t canary);
 
+
 //-----------------------------------------------------------------------------
+
+
 #ifndef NO_DBG
 #define Verify(error)                                                                   \
     if ((error))                                                                        \
@@ -196,7 +199,9 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
 #define StackDump  ;
 #endif
 
+
 //-----------------------------------------------------------------------------
+
 
 stack *declare(new_stack, stack_t) (int capasity)
     {
@@ -526,7 +531,7 @@ int poison_error (stack *stack_ptr)
 
 #ifndef ANOTHER_STACK
 
-#define Is(err_num)  if(error == err_num) return #err_num;
+#define Is(err_num)  if (error == err_num) return #err_num;
                                                                    
 inline const char *str_error (int error)                              
     {
@@ -557,7 +562,7 @@ bool is_dead (canary_t canary)
     return (canary != CHIRP) ? true : false;
     }
 
-inline void print_line(FILE * file)
+inline void print_line (FILE * file)
     {
     if (file == NULL) return;
     fputs ("\n", file);
