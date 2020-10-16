@@ -7,7 +7,7 @@
 static FILE *LOG_FILE_PTR = NULL;
 
 #ifndef LOG_FILE_NAME
-const char *LOG_FILE_NAME = "LogStack.txt";
+#define LOG_FILE_NAME "LogStack.txt"
 #endif
 
 typedef long long canary_t;
