@@ -564,6 +564,6 @@ inline void PrintLine(FILE * file)
     fputs ("\n", file);
     }
     
-
+#undef catch
 #undef cat
 #undef declare
