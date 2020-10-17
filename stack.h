@@ -148,13 +148,16 @@ static bool        is_dead       (canary_t canary);
 
 //-----------------------------------------------------------------------------
 
+//!  Sets stack hashes. 
 #define SetHashes(stack_ptr)  stack_ptr->stack_hash      = get_stack_hash      (stack_ptr);   \
                               stack_ptr->stack_data_hash = get_stack_data_hash (stack_ptr);   
 
+//!  Verifies stack at start. 
 #define StartVerify  Verify (stack_error  (stack_ptr))\
                      Verify (canary_error (stack_ptr))\
                      Verify (hash_error   (stack_ptr))
 
+//!  Verifies stack at end and sets new hashes.
 #define EndVerify    Verify (stack_error  (stack_ptr))\
                      Verify (canary_error (stack_ptr))\
                      SetHashes            (stack_ptr)
@@ -166,6 +169,7 @@ static bool        is_dead       (canary_t canary);
     #define IS_FLOAT_TYPE(type) (((type)(1 + 0.1)) ==  1.1)
     #define CANARY(i)  *(canary_t *)((char *)stack_ptr->data + i*sizeof (stack_t) - ((i == 0) ? sizeof(canary_t) : sizeof (stack_t))) //i am so sorry...
 
+    //!  Prints arbitrary type element.
     void PrintElem (FILE *file, stack *stack_ptr, int i)
         {
         if (IS_FLOAT_TYPE(stack_t))
@@ -188,6 +192,7 @@ static bool        is_dead       (canary_t canary);
     #undef CANARY
     #undef IS_FLOAT_TYPE
 
+    //! Dumps stack info not in NO_LOG mode.
     #define StackDump                                                                                \
         {                                                                                            \
         if (LOG_FILE_PTR == NULL)                                                                    \
@@ -407,7 +412,6 @@ stack *dell_stack (stack *stack_ptr)
 stack_t *stack_free_data (stack *stack_ptr)
     {
     free ((canary_t *)stack_ptr->data - 1);
-    stack_ptr->data = NULL;
 
     return NULL;
     }
@@ -525,7 +529,7 @@ int stack_error (stack *stack_ptr)
 
 int canary_error (stack *stack_ptr)
     {
-    catch (is_dead   (stack_ptr->beginCanary), BEGINS_STACK_CANARY_ERROR); 
+    catch (is_dead   (stack_ptr->beginCanary), BEGINS_STACK_CANARY_ERROR);               
     catch (is_dead   (stack_ptr->endCanary),   ENDS_STACK_CANARY_ERROR  );
 
     catch (is_dead (*((canary_t *)stack_ptr->data - 1)), BEGINS_DATA_CANARY_ERROR); 
@@ -607,5 +611,4 @@ int poison_error (stack *stack_ptr)
 #undef stack
 #undef LOG_FILE_NAME
 
-//!  
-#define ANOTHER_STACK
+#define ANOTHER_STACK    //!< Used by other stack types to avoid double-inclusion errors.
