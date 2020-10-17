@@ -7,7 +7,7 @@
 static FILE *LOG_FILE_PTR = NULL;
 
 #ifndef LOG_FILE_NAME
-#define LOG_FILE_NAME "LogStack.txt"
+#define LOG_FILE_NAME  "LogStack.txt";
 #endif
 
 typedef long long canary_t;
@@ -15,7 +15,10 @@ static const canary_t CHIRP = 0xAEAEAAEAAEAE;
 
 #define POISON  0
 
+int stk_err = 0;
+
 #endif
+
 
 #define cat(stack, separator, type)  stack##separator##type
 #define declare(stack_, type) cat (stack_, _, type)
@@ -52,6 +55,7 @@ enum errors
     STACK_HASH_ERROR            = 75,
     STACK_DATA_HASH_ERROR       = 76,
 
+    NO_ERROR            = 0,
     REALLOCATION_ERROR  = 41,
     CONSTRUCTING_ERROR  = 42,
     POPPING_EMPTY_STACK = 43,
@@ -65,7 +69,7 @@ enum errors
 
 //-----------------------------------------------------------------------------
 
-stack   *declare(new_stack, stack_t)
+stack   *declare (new_stack, stack_t)
                              (int new_capasity = 0);
 int      stack_push          (stack *stack_ptr, stack_t value);
 stack_t  stack_peek          (stack *stack_ptr);
@@ -93,10 +97,7 @@ const char *str_error     (int error);
 inline void print_line    (FILE * file);
 bool        is_dead       (canary_t canary);
 
-
 //-----------------------------------------------------------------------------
-
-
 #ifndef NO_DBG
 #define Verify(error)                                                                   \
     if ((error))                                                                        \
@@ -199,17 +200,15 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
 #define StackDump  ;
 #endif
 
-
 //-----------------------------------------------------------------------------
-
 
 stack *declare(new_stack, stack_t) (int capasity)
     {
     stack *stack_ptr = (stack *)calloc (1, sizeof (*stack_ptr)); 
 
-    int err_num = stack_construct (stack_ptr, capasity);
+    stk_err = stack_construct (stack_ptr, capasity);
     
-    if (err_num != 0) return NULL;
+    if (stk_err != 0) return NULL;
                                    
     EndVerify
     StackDump
@@ -221,13 +220,13 @@ stack *declare(new_stack, stack_t) (int capasity)
 
 int stack_construct (stack *stack_ptr, int capacity)
     {
-    if (capacity < 0) return NEGATIVE_CAPACITY;
+    if (capacity < 0) return stk_err = NEGATIVE_CAPACITY;
 
     char *new_stack_ptr_data  = (char *)calloc (capacity * sizeof (*stack_ptr->data) + 
                                                        2 * sizeof (stack_ptr->beginCanary), sizeof (char));
 
     if (new_stack_ptr_data == NULL)
-        return CONSTRUCTING_ERROR;
+        return stk_err = CONSTRUCTING_ERROR;
     else
         stack_ptr->data = (stack_t *)(new_stack_ptr_data + sizeof (stack_ptr->beginCanary));
 
@@ -242,7 +241,7 @@ int stack_construct (stack *stack_ptr, int capacity)
     add_poison (stack_ptr);
     SetHashes (stack_ptr)
 
-    return 0;
+    return NO_ERROR;
     }
 
 //-----------------------------------------------------------------------------
@@ -252,20 +251,18 @@ int stack_push (stack *stack_ptr, stack_t value)
     StartVerify
     StackDump
 
-    if (value != value) return WRONG_PUSHUNG_VALUE;
-
-    int error = 0;
+    if (value != value) return stk_err = WRONG_PUSHUNG_VALUE;
 
     if (stack_ptr->size == stack_ptr->capacity)
-        error = stack_resize (stack_ptr, stack_ptr->capacity * 2 + 1,
+        stk_err = stack_resize (stack_ptr, stack_ptr->capacity * 2 + 1,
                                         sizeof (*stack_ptr->data));
-    if ( !error )
+    if ( !stk_err )
         *(stack_ptr->data + stack_ptr->size++) = value;
                                   
     EndVerify
     StackDump
 
-    return error;
+    return NO_ERROR;
     }
 
 //-----------------------------------------------------------------------------
@@ -275,15 +272,16 @@ stack_t stack_pop (stack *stack_ptr)
     StartVerify
     StackDump
 
-    if (stack_ptr->size == 0)
-        return 0;
+    if (stack_ptr->size == 0) { stk_err = POPPING_EMPTY_STACK; return POISON; }
 
     if (stack_ptr->capacity > 4 * stack_ptr->size)
-        stack_resize (stack_ptr, stack_ptr->size * 2 + 1, sizeof(stack_t));
+        stk_err = stack_resize (stack_ptr, stack_ptr->size * 2 + 1, sizeof(stack_t));
 
-    int value = *(stack_ptr->data + --stack_ptr->size);
+    if (stk_err) return POISON;
 
-    *(stack_ptr->data + stack_ptr->size) = 0;
+    stack_t value = *(stack_ptr->data + --stack_ptr->size);
+
+    *(stack_ptr->data + stack_ptr->size) = POISON;
                                   
     EndVerify
     StackDump
@@ -298,8 +296,7 @@ stack_t stack_peek (stack *stack_ptr)
     StartVerify
     StackDump
 
-    if (stack_ptr->size == 0)
-       return POISON;
+    if (stack_ptr->size == 0) {stk_err = PEEKING_EMPTY_STACK; return POISON; }
 
 
     EndVerify
@@ -325,7 +322,7 @@ int stack_resize (stack *stack_ptr, int new_capacity, int size_value)
                                      new_capacity*size_value + 2*sizeof (stack_ptr->endCanary));
 
     if (new_data == NULL)
-        return REALLOCATION_ERROR;
+        return stk_err = REALLOCATION_ERROR;
 
     else
         {
@@ -343,7 +340,7 @@ int stack_resize (stack *stack_ptr, int new_capacity, int size_value)
     EndVerify
     StackDump
 
-    return 0;
+    return NO_ERROR;
     }
 
 //-----------------------------------------------------------------------------
@@ -362,7 +359,7 @@ int stack_clear (stack *stack_ptr)
     EndVerify
     StackDump
 
-    return 0;
+    return NO_ERROR;
     }
 
 //-----------------------------------------------------------------------------
@@ -383,7 +380,7 @@ stack *dell_stack (stack *stack_ptr)
 
 stack_t *stack_free_data (stack *stack_ptr)
     {
-    free (stack_ptr->data - 1);
+    free ((canary_t *)stack_ptr->data - 1);
     stack_ptr->data = NULL;
 
     return NULL;
@@ -454,7 +451,7 @@ int get_stack_data_hash (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int Stackhash_error (stack *stack_ptr)
+int stack_data_error (stack *stack_ptr)
     {
     if (stack_ptr->stack_hash != get_stack_hash (stack_ptr))
         return STACK_HASH_ERROR;
@@ -462,7 +459,7 @@ int Stackhash_error (stack *stack_ptr)
     return 0;
     }
 
-int StackDatahash_error (stack *stack_ptr)
+int stack_data_hash_error (stack *stack_ptr)
     {
     if (stack_ptr->stack_data_hash != get_stack_data_hash (stack_ptr))
         return STACK_DATA_HASH_ERROR;
@@ -485,7 +482,7 @@ int stack_verify (stack *stack_ptr)
                                                            
     if (err_num = hash_error   (stack_ptr)) return err_num;
 
-    return 0;
+    return err_num;
     }
 
 int stack_error (stack *stack_ptr)
@@ -513,8 +510,8 @@ int canary_error (stack *stack_ptr)
 
 int hash_error (stack *stack_ptr)
     {
-    catch (Stackhash_error     (stack_ptr), STACK_HASH_ERROR     );
-    catch (StackDatahash_error (stack_ptr), STACK_DATA_HASH_ERROR);
+    catch (stack_data_error     (stack_ptr), STACK_HASH_ERROR     );
+    catch (stack_data_hash_error (stack_ptr), STACK_DATA_HASH_ERROR);
     return 0;
     }
 
@@ -531,7 +528,7 @@ int poison_error (stack *stack_ptr)
 
 #ifndef ANOTHER_STACK
 
-#define Is(err_num)  if (error == err_num) return #err_num;
+#define Is(err_num)  if(error == err_num) return #err_num;
                                                                    
 inline const char *str_error (int error)                              
     {
@@ -562,7 +559,7 @@ bool is_dead (canary_t canary)
     return (canary != CHIRP) ? true : false;
     }
 
-inline void print_line (FILE * file)
+inline void print_line(FILE * file)
     {
     if (file == NULL) return;
     fputs ("\n", file);
@@ -576,6 +573,8 @@ inline void print_line (FILE * file)
 #endif
     
 #undef catch
+#undef cat
+#undef declare
 #undef cat
 #undef declare
 #undef stack
