@@ -1,3 +1,62 @@
+
+
+//{============================================================================
+//!  @file
+//!
+//!  Arbitary type stack.
+//!
+//!  @note To sets the type of the stack use stack_t,
+//!        dont forget to undef it before including 
+//!        another type stack.
+//!
+//!  @note To sets pointer type of the stack use
+//!        typedef with the only one word. 
+//! 
+//!  Example of right including two stacks:
+//!  @code
+//!     #define stack_t double
+//!     #include "stack.h"
+//!     #undef stack_t
+//!
+//!     typedef char * char_ptr
+//!     #define stack_t char_ptr
+//!     #include "stack.h"
+//!     #undef stack_t
+//!  @endcode
+//!
+//!
+//!  @note To disable all logs use NO_LOG.
+//!
+//!  Example of right deasable logging:
+//!  @code
+//!     #define NO_LOG
+//!     #define stack_t double
+//!     #include "stack.h"
+//!     #undef stack_t
+//!  @endcode
+//!
+//!  @note To set another name of log file use LOG_FILE_NAME.
+//!
+//!  Example of right setting the log file:
+//!  @code
+//!     #define LOG_FILE_NAME "new_log_file.txt"
+//!     #define stack_t int
+//!     #include "stack.h"
+//!     #undef stack_t
+//!  @endcode
+//!
+//!  @note To disable all verifies use NO_DBG.
+//!
+//!  @code
+//!     #define NO_DBG
+//!     #define stack_t char
+//!     #include "stack.h"
+//!     #undef stack_t
+//!  @endcode
+//!
+//}============================================================================
+
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
