@@ -1,44 +1,53 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 
 #ifndef LOG_FILE_NAME
-    #define LOG_FILE_NAME  "LogStack.txt";
+    #define LOG_FILE_NAME  "LogStack.txt";    //!<  Name of file for logs.   
 #endif
 
-#ifndef ANOTHER_STACK
+#ifndef ANOTHER_STACK    
 
-    static FILE *LOG_FILE_PTR = NULL;
+    static FILE *LOG_FILE_PTR = NULL;    //!<  Pointer to log file.
 
-    typedef long long canary_t;
-    static const canary_t CHIRP = 0xAEAEAAEAAEAE;
+    typedef long long canary_t;     
+    static const canary_t CHIRP = 0xAEAEAAEAAEAE;    //!<  Right canaries value.   
 
-    #define POISON  0
+    #define POISON  0    //!<  Value for unused data spaces.
 
-    int stk_err = 0;
+    int stk_err = 0;    //!<  Number of last stack error, only one for every stack.
 
 #endif
 
+#define cat(struct_, separator, type)  struct_##separator##type   //!< Concatenate all params.
+#define declare(struct_, type) cat (struct_, _, type)             //!< Concatenate all params with separator '_'.
+#define stack declare (stack, stack_t)                            //!< Dcalration of struct stack.
 
-#define cat(stack, separator, type)  stack##separator##type
-#define declare(stack_, type) cat (stack_, _, type)
-#define stack declare (stack, stack_t)
-
+//!  Struct of stack with previously defined type.
 struct stack
     {
-    canary_t beginCanary;
+    canary_t beginCanary;    //!<  Protected canary, helps to catch random stack changes.
 
-    int stack_hash;
-    int stack_data_hash;
+    int stack_hash;          //!<  Stacks hash, helps to cath random stack changes.
+    int stack_data_hash;     //!<  Stacks data hash, helps to cath random stacks data changes.
 
-    stack_t *data;
-    int      size;
-    int      capacity;
+    stack_t *data;           //!<  Pointer to stacks data.
+    int      size;           //!<  Current size of stack.
+    int      capacity;       //!<  Current capacity of stack.
 
-    canary_t endCanary;
+    canary_t endCanary;      //!<  Protected canary, helps to catch random stack changes.
     };
 
 #ifndef ANOTHER_STACK
+
+//{----------------------------------------------------------------------------
+//!  Errors, that can be detected when you working with the stack.
+//!  Errors with num from 0 to 47 can happend by stack fucntions
+//!  errors and stk_err takes their value.
+//!  Other errors  danote some unusual situations, like random stack changes.
+//}----------------------------------------------------------------------------
 
     enum errors
         {
@@ -92,13 +101,24 @@ int      canary_error        (stack *stack_ptr);
 int      hash_error          (stack *stack_ptr);
 int      stack_verify        (stack *stack_ptr);
 
-const char *str_error     (int error);
+const char *str_error            (int error);
 
 static inline void print_line    (FILE * file);
 static bool        is_dead       (canary_t canary);
 
 //-----------------------------------------------------------------------------
+
 #ifndef NO_DBG
+
+//{----------------------------------------------------------------------------
+//!  Handles errors not in NO_DBG mode.
+//!
+//!  param [in] error - returned value from function,
+//!                     that checks stack errors;
+//!
+//!  In case of non-zero error, aborts the program
+//!  and dumps some info about error at log file (LOG_FILE_NAME). 
+//}----------------------------------------------------------------------------
 
     #define Verify(error)                                                                   \
         if ((error))                                                                        \
@@ -585,5 +605,7 @@ int poison_error (stack *stack_ptr)
 #undef cat
 #undef declare
 #undef stack
+#undef LOG_FILE_NAME
 
+//!  
 #define ANOTHER_STACK
