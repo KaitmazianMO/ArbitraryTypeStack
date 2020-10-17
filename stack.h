@@ -99,6 +99,7 @@ bool        is_dead       (canary_t canary);
 
 //-----------------------------------------------------------------------------
 #ifndef NO_DBG
+
 #define Verify(error)                                                                   \
     if ((error))                                                                        \
         {                                                                               \
@@ -120,6 +121,7 @@ bool        is_dead       (canary_t canary);
         }
 #else
 #define Verify(error)  ;
+
 #endif
 
 
@@ -198,6 +200,7 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
     }
 #else
 #define StackDump  ;
+
 #endif
 
 //-----------------------------------------------------------------------------
