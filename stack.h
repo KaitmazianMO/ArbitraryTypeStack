@@ -52,8 +52,8 @@ struct stack
         ENDS_STACK_CANARY_ERROR   = 72,
         BEGINS_DATA_CANARY_ERROR  = 73,
         ENDS_DATA_CANARY_ERROR    = 74,
-        STACK_HASH_ERROR            = 75,
-        STACK_DATA_HASH_ERROR       = 76,
+        STACK_HASH_ERROR          = 75,
+        STACK_DATA_HASH_ERROR     = 76,
 
         NO_ERROR            = 0,
         REALLOCATION_ERROR  = 41,
