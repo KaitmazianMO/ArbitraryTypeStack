@@ -85,7 +85,7 @@ struct stack
 //!  @param [in] new_capacity - capacity of the created stack
 //!                             default value is 0;
 //!  
-//!  @node In case of an error, replaces stk_err with the error number.
+//!  @note In case of an error, replaces stk_err with the error number.
 //!
 //!  @return Pointer to new stack of NULL in error case.
 //}----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ stack   *declare (new_stack, stack_t)
 //!  @param [in] stack_ptr - a pointer to the stack;
 //!  @param [in] value     - pushing value;
 //!
-//!  @node In case of an error, replaces stk_err with the error number.
+//!  @note In case of an error, replaces stk_err with the error number.
 //!
 //!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ int      stack_push          (stack *stack_ptr, stack_t value);
 //!
 //!  @param [in] stack_ptr - a pointer to the stack; 
 //!
-//!  @node In case of an error, replaces stk_err with the error number.
+//!  @note In case of an error, replaces stk_err with the error number.
 //!
 //!  @return Value of the top element of the stack or POISON in case of an error.
 //}----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ stack_t  stack_peek          (stack *stack_ptr);
 //!
 //!  @param [in] stack_ptr - a pointer to the stack; 
 //!
-//!  @node In case of an error, replaces stk_err with the error number.
+//!  @note In case of an error, replaces stk_err with the error number.
 //!
 //!  @return Value of the top element of the stack or POISON in case of an error.
 //}----------------------------------------------------------------------------
