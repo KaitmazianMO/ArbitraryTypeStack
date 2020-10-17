@@ -78,32 +78,159 @@ struct stack
 
 //-----------------------------------------------------------------------------
 
+    
+//{----------------------------------------------------------------------------
+//!  Constructor for stack with type stack_t.
+//!
+//!  @param [in] new_capacity - capacity of the created stack
+//!                             default value is 0;
+//!  
+//!  @node In case of an error, replaces stk_err with the error number.
+//!
+//!  @return Pointer to new stack of NULL in error case.
+//}----------------------------------------------------------------------------
 stack   *declare (new_stack, stack_t)
                              (int new_capasity = 0);
-int      stack_push          (stack *stack_ptr, stack_t value);
-stack_t  stack_peek          (stack *stack_ptr);
-stack_t  stack_pop           (stack *stack_ptr);
-int      stack_clear         (stack *stack_ptr);
-size_t   stack_size          (stack *stack_ptr);
-size_t   stack_capacity      (stack *stack_ptr);
-stack   *dell_stack          (stack *stack_ptr);
 
+//{----------------------------------------------------------------------------
+//!  Add an item to the top of the stack.
+//!
+//!  @param [in] stack_ptr - a pointer to the stack;
+//!  @param [in] value     - pushing value;
+//!
+//!  @node In case of an error, replaces stk_err with the error number.
+//!
+//!  @return In case of an error - number of error, otherwise NO_ERROR.
+//}----------------------------------------------------------------------------
+int      stack_push          (stack *stack_ptr, stack_t value);
+
+//{----------------------------------------------------------------------------
+//!  Returns value of the top element of the stack.
+//!
+//!  @param [in] stack_ptr - a pointer to the stack; 
+//!
+//!  @node In case of an error, replaces stk_err with the error number.
+//!
+//!  @return Value of the top element of the stack or POISON in case of an error.
+//}----------------------------------------------------------------------------
+stack_t  stack_peek          (stack *stack_ptr);
+                                                                                  
+//{----------------------------------------------------------------------------
+//!  Returns value of the top element of the stack and deletes it.
+//!
+//!  @param [in] stack_ptr - a pointer to the stack; 
+//!
+//!  @node In case of an error, replaces stk_err with the error number.
+//!
+//!  @return Value of the top element of the stack or POISON in case of an error.
+//}----------------------------------------------------------------------------
+stack_t  stack_pop           (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//!  Clears the data of stack.
+//!
+//!  @param [in] stack_ptr - a pointer to the stack; 
+//}----------------------------------------------------------------------------
+int      stack_clear         (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//!  Returnes current size of the stack.
+//!                                               
+//!  @param [in] stack_ptr - a pointer to the stack;
+//}----------------------------------------------------------------------------
+size_t   stack_size          (stack *stack_ptr);
+                                                                                    
+//{----------------------------------------------------------------------------
+//!  Returnes current size of the stack.
+//!                                               
+//!  @param [in] stack_ptr - a pointer to the stack;
+//}----------------------------------------------------------------------------
+size_t   stack_capacity      (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//!  Delletes all spaces and the data of the stack. 
+//!                                               
+//!  @param [in] stack_ptr - a pointer to the stack;
+//!
+//!  @return NULL.
+//}----------------------------------------------------------------------------
+stack   *dell_stack          (stack *stack_ptr);
+                                                                                  
+//{----------------------------------------------------------------------------
+//!  Frees the data of the stack. 
+//!                                               
+//!  @param [in] stack_ptr - a pointer to the stack;
+//!
+//!  @return NULL.
+//}----------------------------------------------------------------------------
 stack_t *stack_free_data     (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      stack_resize        (stack *stack_ptr, int new_capacity, int size_value);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 void     add_poison          (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      stack_construct     (stack *stack_ptr, int new_capacity);
 
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      get_stack_hash      (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      get_stack_data_hash (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      poison_error        (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      stack_error         (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      canary_error        (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      hash_error          (stack *stack_ptr);
+
+//{----------------------------------------------------------------------------
+//}----------------------------------------------------------------------------
 int      stack_verify        (stack *stack_ptr);
 
+
+//{----------------------------------------------------------------------------
+//!  Returns a string with the input number of the error.
+//!
+//!  @param [in] error - number of error;
+//!
+//!  @return A pointer to a string wiht number of the error.
+//}----------------------------------------------------------------------------
 const char *str_error            (int error);
 
+
+//{----------------------------------------------------------------------------
+//!  Prints a line in the file.
+//!
+//!  @param [in] file - a pointer to a file to print;
+//}----------------------------------------------------------------------------
 static inline void print_line    (FILE * file);
+
+//{----------------------------------------------------------------------------
+//!  Verifies input canary.
+//!
+//!  @param [in] canary - a canary for verifying;
+//!
+//!  @return true if canary is OK, otherwise false.
+//}----------------------------------------------------------------------------
 static bool        is_dead       (canary_t canary);
 
 //-----------------------------------------------------------------------------
@@ -113,8 +240,8 @@ static bool        is_dead       (canary_t canary);
 //{----------------------------------------------------------------------------
 //!  Handles errors not in NO_DBG mode.
 //!
-//!  param [in] error - returned value from function,
-//!                     that checks stack errors;
+//!  @param [in] error - returned value from function,
+//!                      that checks stack errors;
 //!
 //!  In case of non-zero error, aborts the program
 //!  and dumps some info about error at log file (LOG_FILE_NAME). 
@@ -385,7 +512,6 @@ int stack_clear (stack *stack_ptr)
         *(stack_ptr->data + i) = 0;
 
     stack_ptr->size = 0;
-    stack_resize (stack_ptr, 0, sizeof (stack_t));
 
     EndVerify
     StackDump
@@ -559,6 +685,7 @@ int poison_error (stack *stack_ptr)
 #ifndef ANOTHER_STACK
     
     #define Is(err_num)  if(error == err_num) return #err_num;
+    #define or(err_num)  return #err_num;
                                                                    
     inline const char *str_error (int error)                              
         {
@@ -580,9 +707,10 @@ int poison_error (stack *stack_ptr)
         Is (WRONG_PUSHUNG_VALUE)
         Is (NEGATIVE_VALUE_SIZE)
         Is (POISON_ERROR)       
-        return NULL;
+        Is (NO_ERROR)
+        or (UNCNOWN_ERROR)
         }
-
+    #undef or
     #undef Is
 
     static bool is_dead (canary_t canary)
