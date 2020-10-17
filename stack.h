@@ -32,8 +32,8 @@ struct stack
     int stack_data_hash;
 
     stack_t *data;
-    int     size;
-    int     capacity;
+    int      size;
+    int      capacity;
 
     canary_t endCanary;
     };
