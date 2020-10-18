@@ -782,34 +782,35 @@ int poison_error (stack *stack_ptr)
 
 #ifndef ANOTHER_STACK
     
-    #define Is(err_num)  if(error == err_num) return #err_num;
-    #define or(err_num)  return #err_num;
+    #define CASE(err_num)  if(error == err_num) return #err_num;
+    #define DEFAULT(err_num)  return #err_num;
                                                                    
     inline const char *str_error (int error)                              
         {
-        Is (NULL_STACK_PTR)
-        Is (NULL_STACK_DATA_PTR)
-        Is (NEGATIVE_CAPACITY)
-        Is (NEGATIVE_SIZE)
-        Is (CAPACITY_LESS_THAN_SIZE)
-        Is (BEGINS_STACK_CANARY_ERROR)
-        Is (ENDS_STACK_CANARY_ERROR)
-        Is (BEGINS_DATA_CANARY_ERROR)
-        Is (STACK_HASH_ERROR)
-        Is (STACK_DATA_HASH_ERROR)
-        Is (POISON_ERROR)
-        Is (REALLOCATION_ERROR)
-        Is (CONSTRUCTING_ERROR)
-        Is (POPPING_EMPTY_STACK)
-        Is (PEEKING_EMPTY_STACK)
-        Is (WRONG_PUSHUNG_VALUE)
-        Is (NEGATIVE_VALUE_SIZE)
-        Is (POISON_ERROR)       
-        Is (NO_ERROR)
-        or (UNCNOWN_ERROR)
+        CASE (NULL_STACK_PTR)
+        CASE (NULL_STACK_DATA_PTR)
+        CASE (NEGATIVE_CAPACITY)
+        CASE (NEGATIVE_SIZE)
+        CASE (CAPACITY_LESS_THAN_SIZE)
+        CASE (BEGINS_STACK_CANARY_ERROR)
+        CASE (ENDS_STACK_CANARY_ERROR)
+        CASE (BEGINS_DATA_CANARY_ERROR)
+        CASE (STACK_HASH_ERROR)
+        CASE (STACK_DATA_HASH_ERROR)
+        CASE (POISON_ERROR)
+        CASE (REALLOCATION_ERROR)
+        CASE (CONSTRUCTING_ERROR)
+        CASE (POPPING_EMPTY_STACK)
+        CASE (PEEKING_EMPTY_STACK)
+        CASE (WRONG_PUSHUNG_VALUE)
+        CASE (NEGATIVE_VALUE_SIZE)
+        CASE (POISON_ERROR)       
+        CASE (NO_ERROR)
+
+        DEFAULT (UNCNOWN_ERROR)
         }
-    #undef or
-    #undef Is
+    #undef CASE
+    #undef DEFAULT
 
     static bool is_dead (canary_t canary)
         {
