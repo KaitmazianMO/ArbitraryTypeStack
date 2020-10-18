@@ -28,7 +28,7 @@
 //!
 //!  @note To disable all logs use NO_LOG.
 //!
-//!  Example of right deasable logging:
+//!  Example of right deasabling logging:
 //!  @code
 //!     #define NO_LOG
 //!     #define stack_t double
