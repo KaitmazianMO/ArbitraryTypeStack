@@ -9,8 +9,9 @@
 //!        dont forget to undef it before including 
 //!        another type stack.
 //!
-//!  @note To set pointer type of the stack use
-//!        typedef with the only one word. 
+//!  @note To set pointer type of the stack use typedef.
+//!
+//!  @warning stack_t can be only one word.
 //! 
 //!  Example of right including two stacks:
 //!  @code
