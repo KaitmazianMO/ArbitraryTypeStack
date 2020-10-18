@@ -3,7 +3,7 @@
 //{============================================================================
 //!  @file
 //!
-//!  Arbitary type stack.
+//!  Arbitary type stack instruction.
 //!
 //!  @note To set the type of the stack use stack_t,
 //!        dont forget to undef it before including 
