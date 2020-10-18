@@ -36,6 +36,7 @@
 //!     #undef stack_t
 //!  @endcode
 //!
+//!
 //!  @note To set another name of log file use LOG_FILE_NAME.
 //!
 //!  Example of right setting the log file:
@@ -46,8 +47,10 @@
 //!     #undef stack_t
 //!  @endcode
 //!
+//!
 //!  @warning All stacks dump in the the same file LOG_FILE_NAME.
 //!  @todo Fix it.
+//!
 //!
 //!  @note To disable all verifies use NO_DBG.
 //!
@@ -57,6 +60,7 @@
 //!     #include "stack.h"
 //!     #undef stack_t
 //!  @endcode
+//!
 //!
 //!  @note Protective elements of stack continue to work,
 //!        so you can catсh the errors by functions from main.
@@ -114,7 +118,6 @@ struct stack
 //!  errors and stk_err takes their value.
 //!  Other errors  danote some unusual situations, like random stack changes.
 //}----------------------------------------------------------------------------
-
     enum errors
         {
         NULL_STACK_PTR          = 60,
