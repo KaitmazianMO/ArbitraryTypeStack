@@ -46,7 +46,8 @@
 //!     #undef stack_t
 //!  @endcode
 //!
-//! @warning All stacks dump in the the same file LOG_FILE_NAME.
+//!  @warning All stacks dump in the the same file LOG_FILE_NAME.
+//!  @todo Fix it.
 //!
 //!  @note To disable all verifies use NO_DBG.
 //!
