@@ -5,22 +5,22 @@
 //!
 //!  Arbitary type stack.
 //!
-//!  @note To sets the type of the stack use stack_t,
+//!  @note To set the type of the stack use stack_t,
 //!        dont forget to undef it before including 
 //!        another type stack.
 //!
-//!  @note To sets pointer type of the stack use
+//!  @note To set pointer type of the stack use
 //!        typedef with the only one word. 
 //! 
 //!  Example of right including two stacks:
 //!  @code
 //!     #define stack_t double
-//!     #include "stack.h"
+//!     #include "stack.h"    /* now you can use stack_double type */
 //!     #undef stack_t
 //!
 //!     typedef char * char_ptr
 //!     #define stack_t char_ptr
-//!     #include "stack.h"
+//!     #include "stack.h"    /* now you can use stack_char_ptr type */
 //!     #undef stack_t
 //!  @endcode
 //!
