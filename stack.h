@@ -242,7 +242,7 @@ stack_t *stack_free_data     (stack *stack_ptr);
 //!  @param [in] size_value   - size of stacks value;
 //!
 //!  @note The current capacity is not equal to the capacity
-//!        in fact it is more than it by 2 * sizeof (canary_t) + 1.
+//!        in fact it is more than it by 2 * sizeof (canary_t).
 //!
 //!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
