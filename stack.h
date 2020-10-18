@@ -46,6 +46,8 @@
 //!     #undef stack_t
 //!  @endcode
 //!
+//! @warning All stacks dump in the the same file LOG_FILE_NAME.
+//!
 //!  @note To disable all verifies use NO_DBG.
 //!
 //!  @code
@@ -54,6 +56,9 @@
 //!     #include "stack.h"
 //!     #undef stack_t
 //!  @endcode
+//!
+//!  @note Protective elements of stack continue to work,
+//!        so you can catсh the errors by functions from main.
 //!
 //}============================================================================
 
