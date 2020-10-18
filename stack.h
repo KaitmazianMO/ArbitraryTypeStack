@@ -231,43 +231,75 @@ stack   *dell_stack          (stack *stack_ptr);
 stack_t *stack_free_data     (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Changes capacity of stack.
+//!
+//!  @param [in] stack_ptr    - a pointer to the stack;
+//!  @param [in] new_capacity - new number of elements of the stack;
+//!  @param [in] size_value   - size of stacks value;
+//!
+//!  @note The current capacity is not equal to the capacity
+//!        in fact it is more than it by 2 * sizeof (canary_t) + 1.
+//!
+//!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
 int      stack_resize        (stack *stack_ptr, int new_capacity, int size_value);
 
 //{----------------------------------------------------------------------------
+//!  Sets poison for items coming after size.
+//!
+//!  @param [in] stack_ptr - a pointer to the stack;
 //}----------------------------------------------------------------------------
 void     add_poison          (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Sets the params of a previously allocated stack.
+//!
+//!  @param [in] stack_ptr    - a pointer to the stack;
+//!  @param [in] new_capacity - new number of elements of the stack;
+//1
+//!  @note In case of an error, replaces stk_err with the error number.
+//!
+//!  @warning Dont contruct a already constructed
+//!           stack avoid memory leak.
+//!
+//!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
 int      stack_construct     (stack *stack_ptr, int new_capacity);
 
 
 //{----------------------------------------------------------------------------
+//!  Returnes hash of stack from stack_ptr.
 //}----------------------------------------------------------------------------
 int      get_stack_hash      (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Returnes hast of stacks data from stack_ptr.
 //}----------------------------------------------------------------------------
 int      get_stack_data_hash (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//! Checks is all elements after sile are POISON.
 //}----------------------------------------------------------------------------
 int      poison_error        (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Returnes errors of stacks spaces is case of an error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
 int      stack_error         (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Returnes canary errors is case of an error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
 int      canary_error        (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Returnes hash errors is case of an error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
 int      hash_error          (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
+//!  Returnes all erros that can happend with the stack
+//!  is case of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
 int      stack_verify        (stack *stack_ptr);
 
@@ -462,7 +494,7 @@ int stack_construct (stack *stack_ptr, int capacity)
     stack_ptr->size     = 0;
 
     add_poison (stack_ptr);
-    SetHashes (stack_ptr)
+    SetHashes  (stack_ptr)
 
     return NO_ERROR;
     }
