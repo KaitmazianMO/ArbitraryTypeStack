@@ -807,7 +807,7 @@ int poison_error (stack *stack_ptr)
         CASE (POISON_ERROR)       
         CASE (NO_ERROR)
 
-        DEFAULT (UNCNOWN_ERROR)
+        DEFAULT (UNKNOWN_ERROR)
         }
     #undef CASE
     #undef DEFAULT
