@@ -36,7 +36,6 @@
 //!     #undef stack_t
 //!  @endcode
 //!
-//!
 //!  @note To set another name of log file use LOG_FILE_NAME.
 //!
 //!  Example of right setting the log file:
@@ -47,20 +46,16 @@
 //!     #undef stack_t
 //!  @endcode
 //!
-//!
-//!  @warning All stacks dump in the the same file LOG_FILE_NAME.
-//!  @todo Fix it.
-//!
+//! @warning All stacks dump in the the same file LOG_FILE_NAME.
 //!
 //!  @note To disable all verifies use NO_DBG.
 //!
 //!  @code
-//!     #define NO_DBG
+//!     #define NO_DEBUG
 //!     #define stack_t char
 //!     #include "stack.h"
 //!     #undef stack_t
 //!  @endcode
-//!
 //!
 //!  @note Protective elements of stack continue to work,
 //!        so you can catсh the errors by functions from main.
@@ -70,26 +65,46 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <limits.h>
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+
+
+#ifndef NO_DEBUG
+    #define ON_DEBUG_MODE(...)  __VA_ARGS__
+#else
+    #define ON_DEBUG_MODE(code)      
+#endif
+
+#ifndef NO_LOG
+    #define ON_LOG_MODE(...)    __VA_ARGS__
+#else
+    #define ON_LOG_MODE(code)      
+#endif 
+
+#ifndef ANOTHER_STACK
+    #define ON_FIRST_RUN(...)   __VA_ARGS__ 
+#else
+    #define ON_FIRST_RUN(code)       
+#endif
+
+
 
 #ifndef LOG_FILE_NAME
     #define LOG_FILE_NAME  "LogStack.txt";    //!<  Name of file for logs.   
 #endif
 
-#ifndef ANOTHER_STACK    
+ON_FIRST_RUN (
+               static FILE *LOG_FILE_PTR = NULL;    //!<  Pointer to log file.
 
-    static FILE *LOG_FILE_PTR = NULL;    //!<  Pointer to log file.
+               typedef long long canary_t;     
+               static const canary_t CHIRP = 0xAEAEAAEAAEAE;    //!<  Right canaries value.   
 
-    typedef long long canary_t;     
-    static const canary_t CHIRP = 0xAEAEAAEAAEAE;    //!<  Right canaries value.   
+               int stk_err = 0;    //!<  Number of last stack error, only one for every stack.
+             )
 
-    #define POISON  0    //!<  Value for unused data spaces.
-
-    int stk_err = 0;    //!<  Number of last stack error, only one for every stack.
-
-#endif
+#define POISON  0    //!<  Value for unused data spaces.
 
 #define cat(struct_, separator, type)  struct_##separator##type   //!< Concatenate all params.
 #define declare(struct_, type) cat (struct_, _, type)             //!< Concatenate all params with separator '_'.
@@ -98,7 +113,7 @@
 //!  Struct of stack with previously defined type.
 struct stack
     {
-    canary_t beginCanary;    //!<  Protected canary, helps to catch random stack changes.
+    ON_DEBUG_MODE ( canary_t frontCanary; )    //!<  Protected canary, helps to catch random stack changes. 
 
     int stack_hash;          //!<  Stacks hash, helps to cath random stack changes.
     int stack_data_hash;     //!<  Stacks data hash, helps to cath random stacks data changes.
@@ -107,10 +122,11 @@ struct stack
     int      size;           //!<  Current size of stack.
     int      capacity;       //!<  Current capacity of stack.
 
-    canary_t endCanary;      //!<  Protected canary, helps to catch random stack changes.
+    ON_DEBUG_MODE ( canary_t backCanary; )      //!<  Protected canary, helps to catch random stack changes.
     };
 
-#ifndef ANOTHER_STACK
+
+ON_FIRST_RUN (
 
 //{----------------------------------------------------------------------------
 //!  Errors, that can be detected when you working with the stack.
@@ -118,33 +134,31 @@ struct stack
 //!  errors and stk_err takes their value.
 //!  Other errors  danote some unusual situations, like random stack changes.
 //}----------------------------------------------------------------------------
-    enum errors
-        {
-        NULL_STACK_PTR          = 60,
-        NULL_STACK_DATA_PTR     = 61,
-        CAPACITY_LESS_THAN_SIZE = 62,
-        NEGATIVE_CAPACITY       = 63,
-        NEGATIVE_SIZE           = 64,
+               enum errors                               
+                   {                                     
+                   NULL_STACK_PTR          = 60,         
+                   NULL_STACK_DATA_PTR     = 61,         
+                   CAPACITY_LESS_THAN_SIZE = 62,         
+                   NEGATIVE_CAPACITY       = 63,         
+                   NEGATIVE_SIZE           = 64,         
+                                                         
+                   FRONT_STACK_CANARY_ERROR = 71,
+                   BACK_STACK_CANARY_ERROR   = 72,
+                   FRONT_DATA_CANARY_ERROR  = 73,
+                   BACK_DATA_CANARY_ERROR    = 74,
+                   STACK_HASH_ERROR          = 75,
+                   STACK_DATA_HASH_ERROR     = 76,
 
-        BEGINS_STACK_CANARY_ERROR = 71,
-        ENDS_STACK_CANARY_ERROR   = 72,
-        BEGINS_DATA_CANARY_ERROR  = 73,
-        ENDS_DATA_CANARY_ERROR    = 74,
-        STACK_HASH_ERROR          = 75,
-        STACK_DATA_HASH_ERROR     = 76,
-
-        NO_ERROR            = 0,
-        REALLOCATION_ERROR  = 41,
-        CONSTRUCTING_ERROR  = 42,
-        POPPING_EMPTY_STACK = 43,
-        PEEKING_EMPTY_STACK = 44,
-        WRONG_PUSHUNG_VALUE = 45,
-        NEGATIVE_VALUE_SIZE = 46,
-        POISON_ERROR        = 47,
-        };
-
-#endif
-
+                   NO_ERROR            = 0,
+                   REALLOCATION_ERROR  = 41,
+                   CONSTRUCTING_ERROR  = 42,
+                   POPPING_EMPTY_STACK = 43,
+                   PEEKING_EMPTY_STACK = 44,
+                   WRONG_PUSHUNG_VALUE = 45,
+                   NEGATIVE_VALUE_SIZE = 46,
+                   POISON_ERROR        = 47,
+                   };
+             )
 //-----------------------------------------------------------------------------
 
     
@@ -242,7 +256,7 @@ stack_t *stack_free_data     (stack *stack_ptr);
 //!  @param [in] size_value   - size of stacks value;
 //!
 //!  @note The current capacity is not equal to the capacity
-//!        in fact it is more than it by 2 * sizeof (canary_t).
+//!        in fact it is more than it by 2 * sizeof (canary_t) + 1.
 //!
 //!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
@@ -264,7 +278,7 @@ void     add_poison          (stack *stack_ptr);
 //!  @note In case of an error, replaces stk_err with the error number.
 //!
 //!  @warning Dont contruct a already constructed
-//!           stack avoid memory leak.
+//!           stack to avoid memory leak.
 //!
 //!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
@@ -277,12 +291,12 @@ int      stack_construct     (stack *stack_ptr, int new_capacity);
 int      get_stack_hash      (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
-//!  Returnes hast of stacks data from stack_ptr.
+//!  Returnes hash of stacks data from stack_ptr.
 //}----------------------------------------------------------------------------
 int      get_stack_data_hash (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
-//! Checks is all elements after sile are POISON.
+//! Checks is all elements after size are POISON.
 //}----------------------------------------------------------------------------
 int      poison_error        (stack *stack_ptr);
 
@@ -336,8 +350,6 @@ static bool        is_dead       (canary_t canary);
 
 //-----------------------------------------------------------------------------
 
-#ifndef NO_DBG
-
 //{----------------------------------------------------------------------------
 //!  Handles errors not in NO_DBG mode.
 //!
@@ -348,31 +360,29 @@ static bool        is_dead       (canary_t canary);
 //!  and dumps some info about error at log file (LOG_FILE_NAME). 
 //}----------------------------------------------------------------------------
 
-    #define Verify(error)                                                                   \
-        if ((error))                                                                        \
-            {                                                                               \
-            if (LOG_FILE_PTR == NULL)                                                       \
-                LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w+");                                 \
-            const char *str_err = str_error (error);                                        \
-            print_line (LOG_FILE_PTR);                                                      \
-            fprintf (LOG_FILE_PTR, "Stack (ERROR %d: %s) [%p] \n\n"                         \
-                              "Function: %s\n\n", error, str_err,                           \
-                                                  stack_ptr, __func__);                     \
-                                                                                            \
-            printf ("\n\n>>>FATAL ERROR!"                                                   \
-                    "\n\n>>>You can find log information in file: %s\n\n", LOG_FILE_NAME);  \
-                                                                                            \
-            fflush    (LOG_FILE_PTR);                                                       \
-            print_line (LOG_FILE_PTR);                                                      \
-                                                                                            \
-            abort ();                                                                       \
-            }
-
-#else
-    #define Verify(error)  ;
-
-#endif
-
+#define Verify(error)                                                                               \
+ON_DEBUG_MODE (                                                                                     \
+                if ((error))                                                                        \
+                    {                                                                               \
+                    if (LOG_FILE_PTR == NULL)                                                       \
+                        LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w+");                                 \
+                                                                                                    \
+                    const char *str_err = str_error (error);                                        \
+                    print_line (LOG_FILE_PTR);                                                      \
+                    fprintf (LOG_FILE_PTR, "Stack (ERROR %d: %s) [%p] \n\n"                         \
+                                      "Function: %s\n\n", error, str_err,                           \
+                                                          stack_ptr, __func__);                     \
+                                                                                                    \
+                    printf ("\n\n>>>FATAL ERROR!"                                                   \
+                            "\n\n>>>You can find log information in file: %s\n\n", LOG_FILE_NAME);  \
+                                                                                                    \
+                    fflush    (LOG_FILE_PTR);                                                       \
+                    print_line (LOG_FILE_PTR);                                                      \
+                    LOG_FILE_PTR = NULL;                                                            \
+                                                                                                    \
+                    abort ();                                                                       \
+                    }                                                                               \
+               )
 
 //-----------------------------------------------------------------------------
 
@@ -395,7 +405,8 @@ static bool        is_dead       (canary_t canary);
 #ifndef NO_LOG
 
     #define IS_FLOAT_TYPE(type) (((type)(1 + 0.1)) ==  1.1)
-    #define CANARY(i)  *(canary_t *)((char *)stack_ptr->data + i*sizeof (stack_t) - ((i == 0) ? sizeof(canary_t) : sizeof (stack_t))) //i am so sorry...
+    #define CANARY(i)  *(canary_t *)((char *)stack_ptr->data + i*sizeof (stack_t) -        \
+                       ((i == 0) ? sizeof(canary_t) : sizeof (stack_t))) 
 
     //!  Prints arbitrary type element.
     void PrintElem (FILE *file, stack *stack_ptr, int i)
@@ -482,17 +493,17 @@ int stack_construct (stack *stack_ptr, int capacity)
     if (capacity < 0) return stk_err = NEGATIVE_CAPACITY;
 
     char *new_stack_ptr_data  = (char *)calloc (capacity * sizeof (*stack_ptr->data) + 
-                                                       2 * sizeof (stack_ptr->beginCanary), sizeof (char));
+                                                       2 * sizeof (stack_ptr->frontCanary), sizeof (char));
 
     if (new_stack_ptr_data == NULL)
         return stk_err = CONSTRUCTING_ERROR;
     else
-        stack_ptr->data = (stack_t *)(new_stack_ptr_data + sizeof (stack_ptr->beginCanary));
+        stack_ptr->data = (stack_t *)(new_stack_ptr_data + sizeof (stack_ptr->frontCanary));
 
-    stack_ptr->beginCanary                      = CHIRP;
+    stack_ptr->frontCanary                      = CHIRP;
     *((canary_t *)stack_ptr->data - 1)          = CHIRP; 
     *((canary_t *)(stack_ptr->data + capacity)) = CHIRP; 
-    stack_ptr->endCanary                        = CHIRP;
+    stack_ptr->backCanary                        = CHIRP;
 
     stack_ptr->capacity = capacity;
     stack_ptr->size     = 0;
@@ -555,7 +566,7 @@ stack_t stack_peek (stack *stack_ptr)
     StartVerify
     StackDump
 
-    if (stack_ptr->size == 0) {stk_err = PEEKING_EMPTY_STACK; return POISON; }
+    if (stack_ptr->size == 0) { stk_err = PEEKING_EMPTY_STACK; return POISON; }
 
 
     EndVerify
@@ -577,19 +588,19 @@ int stack_resize (stack *stack_ptr, int new_capacity, int size_value)
     if (size_value < 0)
         return NEGATIVE_VALUE_SIZE;
 
-    char *new_data = (char *)realloc ((char *)stack_ptr->data -  sizeof (stack_ptr->endCanary),
-                                     new_capacity*size_value + 2*sizeof (stack_ptr->endCanary));
+    char *new_data = (char *)realloc ((char *)stack_ptr->data -  sizeof (stack_ptr->backCanary),
+                                     new_capacity*size_value + 2*sizeof (stack_ptr->backCanary));
 
     if (new_data == NULL)
         return stk_err = REALLOCATION_ERROR;
 
     else
         {
-        stack_ptr->data     = (stack_t *)(new_data + sizeof (stack_ptr->endCanary));
+        stack_ptr->data     = (stack_t *)(new_data + sizeof (stack_ptr->backCanary));
         stack_ptr->capacity = new_capacity;
 
-        stack_ptr->beginCanary = CHIRP;
-        stack_ptr->endCanary   = CHIRP;
+        stack_ptr->frontCanary = CHIRP;
+        stack_ptr->backCanary   = CHIRP;
 
         *((canary_t *)stack_ptr->data - 1)              = CHIRP; 
         *((canary_t *)(stack_ptr->data + new_capacity)) = CHIRP;
@@ -682,7 +693,7 @@ int get_stack_hash (stack *stack_ptr)
 
     int new_stack_hash = 0;
     
-    int p = 1, p_pow = 2147483647;
+    int p = 1, p_pow = INT_MAX;
     for (size_t i = 0; i < sizeof (*stack_ptr) / sizeof (int); ++i, p *= p_pow)
         new_stack_hash += *(hash_ptr + i) * p;
 
@@ -699,7 +710,7 @@ int get_stack_data_hash (stack *stack_ptr)
     int new_stack_data_hash = 0;
     stack_t *hash_ptr = stack_ptr->data;
 
-    int p = 1, p_pow = 2147483647;
+    int p = 1, p_pow = INT_MAX;
     for (int i = 0; i < stack_ptr->capacity; ++i, p *= p_pow)
         new_stack_data_hash += (int)*(hash_ptr + i) * p;
 
@@ -756,12 +767,12 @@ int stack_error (stack *stack_ptr)
 
 int canary_error (stack *stack_ptr)
     {
-    catch (is_dead   (stack_ptr->beginCanary), BEGINS_STACK_CANARY_ERROR);               
-    catch (is_dead   (stack_ptr->endCanary),   ENDS_STACK_CANARY_ERROR  );
+    catch (is_dead   (stack_ptr->frontCanary), FRONT_STACK_CANARY_ERROR);               
+    catch (is_dead   (stack_ptr->backCanary),   BACK_STACK_CANARY_ERROR  );
 
-    catch (is_dead (*((canary_t *)stack_ptr->data - 1)), BEGINS_DATA_CANARY_ERROR); 
+    catch (is_dead (*((canary_t *)stack_ptr->data - 1)), FRONT_DATA_CANARY_ERROR); 
     catch (is_dead (*(canary_t *)(stack_ptr->data +                                              
-                       stack_ptr->capacity)),            BEGINS_DATA_CANARY_ERROR);
+                       stack_ptr->capacity)),            FRONT_DATA_CANARY_ERROR);
     return NO_ERROR;
     }
 
@@ -795,9 +806,9 @@ int poison_error (stack *stack_ptr)
         CASE (NEGATIVE_CAPACITY)
         CASE (NEGATIVE_SIZE)
         CASE (CAPACITY_LESS_THAN_SIZE)
-        CASE (BEGINS_STACK_CANARY_ERROR)
-        CASE (ENDS_STACK_CANARY_ERROR)
-        CASE (BEGINS_DATA_CANARY_ERROR)
+        CASE (FRONT_STACK_CANARY_ERROR)
+        CASE (BACK_STACK_CANARY_ERROR)
+        CASE (FRONT_DATA_CANARY_ERROR)
         CASE (STACK_HASH_ERROR)
         CASE (STACK_DATA_HASH_ERROR)
         CASE (POISON_ERROR)
@@ -823,6 +834,7 @@ int poison_error (stack *stack_ptr)
     static inline void print_line(FILE * file)
         {
         if (file == NULL) return;
+
         fputs ("\n", file);
 
         for (int i = 0; i < 100; ++i)
@@ -833,6 +845,7 @@ int poison_error (stack *stack_ptr)
 
 #endif
     
+#undef POISON
 #undef catch
 #undef cat
 #undef declare
