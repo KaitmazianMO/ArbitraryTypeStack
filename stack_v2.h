@@ -69,18 +69,21 @@
 
 
 #ifndef NO_DEBUG
-    #define ON_DEBUG_MODE(...)  __VA_ARGS__
+    //! The macro code will disappear from the program in the mode NO_DEBUG.
+    #define ON_DEBUG_MODE(...)  __VA_ARGS__      
 #else
     #define ON_DEBUG_MODE(code)      
 #endif
 
 #ifndef NO_LOG
+    //! The macro code will disappear from the program in the mode NO_LOG.
     #define ON_LOG_MODE(...)    __VA_ARGS__
 #else
     #define ON_LOG_MODE(code)      
 #endif 
 
 #ifndef ANOTHER_STACK
+    //! The macro code will disappear from the program if there is more then only one type stack.
     #define ON_FIRST_RUN(...)   __VA_ARGS__ 
 #else
     #define ON_FIRST_RUN(code)       
