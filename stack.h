@@ -381,7 +381,7 @@ const char *str_error         (int error);
 //!
 //!  @param [in] file - a pointer to a file to print;
 //}----------------------------------------------------------------------------
-static inline void print_line (FILE * file);
+void        print_line        (FILE * file);
 
 //{----------------------------------------------------------------------------
 //!  Verifies input canary.
@@ -390,7 +390,7 @@ static inline void print_line (FILE * file);
 //!
 //!  @return true if canary is OK, otherwise false.
 //}----------------------------------------------------------------------------
-static bool        is_dead    (canary_t canary);
+bool        is_dead           (canary_t canary);
 
 
 
