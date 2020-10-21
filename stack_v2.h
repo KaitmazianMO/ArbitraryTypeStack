@@ -46,10 +46,9 @@
 //!     #undef stack_t
 //!  @endcode
 //!
-//!  @bug When writing to multiple files, sometimes recording does not occur.
 //!
 //!  @note To disable all verifies use NO_DEBUG.
-//!
+//!  Example of right deasabling debug:
 //!  @code
 //!     #define NO_DEBUG
 //!     #define stack_t char
@@ -57,8 +56,6 @@
 //!     #undef stack_t
 //!  @endcode
 //!
-//!  @note Protective elements of stack continue to work,
-//!        so you can catсh the errors by functions from main.
 //!
 //}============================================================================
 
@@ -170,17 +167,17 @@ ON_FIRST_RUN (
              )
 //-----------------------------------------------------------------------------
 
-#define INFO(stack)  { __FILE__, __FUNCSIG__ , __LINE__, #stack }
-#define stack_ctor(      stack_ptr, capacity )   stack_ctor_      (stack_ptr, capacity, INFO (stack_ptr))
-#define stack_push(      stack_ptr, value    )   stack_push_      (stack_ptr, value,    INFO (stack_ptr))
-#define stack_peek(      stack_ptr           )   stack_peek_      (stack_ptr,           INFO (stack_ptr))
-#define stack_size(      stack_ptr           )   stack_size_      (stack_ptr,           INFO (stack_ptr)) 
-#define stack_dtor(      stack_ptr           )   stack_dtor_      (stack_ptr,           INFO (stack_ptr))
-#define stack_pop(       stack_ptr           )   stack_pop_       (stack_ptr,           INFO (stack_ptr))
-#define stack_clear(     stack_ptr           )   stack_clear_     (stack_ptr,           INFO (stack_ptr))
-#define stack_capacity(  stack_ptr           )   stack_capacity_  (stack_ptr,           INFO (stack_ptr))
+#define INFO__(stack)  { __FILE__, __FUNCSIG__ , __LINE__, #stack }
+#define stack_ctor(      stack_ptr, capacity )   stack_ctor_      (stack_ptr, capacity, INFO__ (stack_ptr))
+#define stack_push(      stack_ptr, value    )   stack_push_      (stack_ptr, value,    INFO__ (stack_ptr))
+#define stack_peek(      stack_ptr           )   stack_peek_      (stack_ptr,           INFO__ (stack_ptr))
+#define stack_size(      stack_ptr           )   stack_size_      (stack_ptr,           INFO__ (stack_ptr)) 
+#define stack_dtor(      stack_ptr           )   stack_dtor_      (stack_ptr,           INFO__ (stack_ptr))
+#define stack_pop(       stack_ptr           )   stack_pop_       (stack_ptr,           INFO__ (stack_ptr))
+#define stack_clear(     stack_ptr           )   stack_clear_     (stack_ptr,           INFO__ (stack_ptr))
+#define stack_capacity(  stack_ptr           )   stack_capacity_  (stack_ptr,           INFO__ (stack_ptr))
 
-#define stack_resize( stack_ptr, new_size , value_size )   stack_resize_  \
+#define stack_resize(    stack_ptr, new_size, value_size )   stack_resize_  \
                                                                   (stack_ptr, new_size, value_size, INFO (stack_ptr))
                                                                                                          
 //#define stack_free_data( stack_ptr           )   stack_free_data_ (stack_ptr,           INFO (stack_ptr))
@@ -358,7 +355,6 @@ static inline void print_line (FILE * file);
 //}----------------------------------------------------------------------------
 static bool        is_dead    (canary_t canary);
 
-//-----------------------------------------------------------------------------
 
 //{----------------------------------------------------------------------------
 //!  Handles errors not in NO_DBG mode.
@@ -369,16 +365,12 @@ static bool        is_dead    (canary_t canary);
 //!  In case of non-zero error, aborts the program
 //!  and dumps some info about error at log file (LOG_FILE_NAME). 
 //}----------------------------------------------------------------------------
-
 #define Verify(error)                                                                               \
                 if ((error))                                                                        \
                     {                                                                               \
-                    if (LOG_FILE_PTR == NULL)                                                       \
-                        LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w+");                                 \
-                                                                                                    \
                     const char *str_err = str_error (error);                                        \
                     print_line (LOG_FILE_PTR);                                                      \
-              LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w+");                                           \
+              LOG_FILE_PTR = fopen (LOG_FILE_NAME, "a+");                                           \
               print_line (LOG_FILE_PTR);                                                            \
                                                                                                     \
               fprintf (LOG_FILE_PTR, "Stack <%s> %s (ERROR: %d (%s)) [%p] \n\n"                     \
@@ -418,12 +410,11 @@ static bool        is_dead    (canary_t canary);
 //-----------------------------------------------------------------------------
 
 
-
-    #define IS_FLOAT_TYPE(type) (((type)(1 + 0.1)) ==  1.1)
-    #define CANARY(i)  *(canary_t *)((char *)stack_ptr->data + i*sizeof (stack_t) -        \
+#define IS_FLOAT_TYPE(type) (((type)(1 + 0.1)) ==  1.1)
+#define CANARY(i)  *(canary_t *)((char *)stack_ptr->data + i*sizeof (stack_t) -        \
                        ((i == 0) ? sizeof(canary_t) : sizeof (stack_t))) 
 
-    //!  Prints arbitrary type element.
+//!  Prints arbitrary type element.
 void PrintElem (FILE *file, stack *stack_ptr, int i)
     {
     if (i <= stack_ptr->size && i != 0) 
@@ -743,7 +734,7 @@ int get_stack_data_hash (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int stack_data_error (stack *stack_ptr)
+int stack_hash_error (stack *stack_ptr)
     {
     ON_DEBUG_MODE ( 
                     if (stack_ptr->stack_hash != get_stack_hash (stack_ptr))
@@ -804,7 +795,7 @@ int canary_error (stack *stack_ptr)
 
 int hash_error (stack *stack_ptr)
     {
-    catch (stack_data_error      (stack_ptr), STACK_HASH_ERROR     );
+    catch (stack_hash_error      (stack_ptr), STACK_HASH_ERROR     );
     catch (stack_data_hash_error (stack_ptr), STACK_DATA_HASH_ERROR);
     return NO_ERROR;
     }
