@@ -857,8 +857,8 @@ int poison_error (stack *stack_ptr)
     }
 
     
-    #define CASE(err_num)  if(error == err_num) return #err_num;
-    #define DEFAULT(err_num)  return #err_num;
+#define CASE(err_num)  if(error == err_num) return #err_num;
+#define DEFAULT(err_num)  return #err_num;
 
 ON_FIRST_RUN (
                const char *str_error (int error)                              
