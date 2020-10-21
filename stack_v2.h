@@ -243,7 +243,7 @@ ON_FIRST_RUN (
 //!
 //!  @param [in] stack_ptr - a pointer to the stack; 
 //}----------------------------------------------------------------------------
-#define stack_clear(     stack_ptr           )   stack_clear_     (stack_ptr,           INFO__ (stack_ptr))
+#define stack_free_data( stack_ptr           )   stack_free_data_ (stack_ptr,           INFO__ (stack_ptr))
 
 //{----------------------------------------------------------------------------
 //!  Returnes current size of the stack.
@@ -305,7 +305,7 @@ stack_t  stack_peek_          (stack *stack_ptr, info func_info);               
                                                                                                              //      
 stack_t  stack_pop_           (stack *stack_ptr, info func_info);                                            //      LOGGED
                                                                                                              //
-int      stack_clear_         (stack *stack_ptr, info func_info);                                            //      FUNCTIONS
+int      stack_free_data_     (stack *stack_ptr, info func_info);                                            //      FUNCTIONS
                                                                                                              //      
 size_t   stack_size_          (stack *stack_ptr, info func_info);                                            //
                                                                                                              //
@@ -674,7 +674,7 @@ int stack_resize_ (stack *stack_ptr, int new_capacity, int size_value, info func
 
 //-----------------------------------------------------------------------------
 
-int stack_clear_ (stack *stack_ptr, info func_info)
+int stack_free_data_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     StackDump
