@@ -50,7 +50,7 @@
 //!  @note To disable all verifies use NO_PROTECTION.
 //!  Example of right deasabling debug:
 //!  @code
-//!     #define NO_DEBUG
+//!     #define NO_PROTECTION
 //!     #define stack_t char
 //!     #include "stack.h"
 //!     #undef stack_t
