@@ -68,7 +68,7 @@
 
 
 #ifndef NO_PROTECTION
-    //! The macro code will disappear from the program in the mode NO_DEBUG.
+    //! The macro code will disappear from the program in the mode NO_PROTECTION.
     #define ON_PROTECTION_MODE(...)  __VA_ARGS__      
 #else
     #define ON_PROTECTION_MODE(code)      
