@@ -427,7 +427,7 @@ static bool        is_dead    (canary_t canary);
                                      "Called from function: %s\n\n"                                 \
                                      "Line: %d\n\n",                                                \
                                       type_str (stack_t), func_info.param_name, error,              \
-                                      str_error (error), stack_ptr, __func__,                    \
+                                      str_error (error), stack_ptr, __func__,                       \
                                       func_info.file, func_info.func, func_info.line);              \
                                                                                                     \
                     printf ("\n\n>>>FATAL ERROR!"                                                   \
@@ -517,7 +517,7 @@ ON_LOG_MODE (                                                                   
                                      "Called from function: %s\n\n"                                 \
                                      "Line: %d\n\n",                                                \
                                       type_str (stack_t), func_info.param_name, stack_ptr,          \
-                                      __func__, func_info.file, func_info.func, func_info.line); \
+                                      __func__, func_info.file, func_info.func, func_info.line);    \
                                                                                                     \
               fprintf (LOG_FILE_PTR,                                                                \
                                 "{\n"                                                               \
