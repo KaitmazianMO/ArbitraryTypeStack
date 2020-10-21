@@ -50,7 +50,7 @@
 //!  @note To disable all verifies use NO_PROTECTION.
 //!  Example of right deasabling debug:
 //!  @code
-//!     #define NO_DEBUG
+//!     #define NO_PROTECTION
 //!     #define stack_t char
 //!     #include "stack.h"
 //!     #undef stack_t
@@ -909,5 +909,7 @@ ON_FIRST_RUN (
 #undef LOG_FILE_NAME
 #undef stack_t
 #undef canary_t
+#undef ON_PROTECTION_MODE
+#undef ONLOG_MODE
 #define ANOTHER_STACK    //!< Used by other stack types to avoid double-inclusion errors.
 
