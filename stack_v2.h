@@ -60,6 +60,7 @@
 //}============================================================================
 
 
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <limits.h>
@@ -85,6 +86,14 @@
 #else
     #define ON_FIRST_RUN(code)       
 #endif
+
+
+
+//*****************************************************************************
+//
+//  Declaring constants and defining structures.
+//
+//*****************************************************************************
 
 
 
@@ -165,23 +174,33 @@ ON_FIRST_RUN (
                    const char *param_name;
                    };
              )
-//-----------------------------------------------------------------------------
 
-#define INFO__(stack)  { __FILE__, __FUNCSIG__ , __LINE__, #stack }
+
+
+//*****************************************************************************
+//
+//  Minor revision of the standard functions to simplify the work with logs.
+//
+//*****************************************************************************
+
+
+
+#define INFO__(stack)  { __FILE__, __func__ , __LINE__, #stack }   //!<  Macro for stacndart log info.
+
+//{----------------------------------------------------------------------------
+//!  Sets the params of a previously allocated stack.
+//!
+//!  @param [in] stack_ptr    - a pointer to the stack;
+//!  @param [in] capacity     - new number of elements of the stack;
+//1
+//!  @note In case of an error, replaces stk_err with the error number.
+//!
+//!  @warning Dont contruct a already constructed
+//!           stack to avoid memory leak.
+//!
+//!  @return In case of an error - number of error, otherwise NO_ERROR.
+//}----------------------------------------------------------------------------
 #define stack_ctor(      stack_ptr, capacity )   stack_ctor_      (stack_ptr, capacity, INFO__ (stack_ptr))
-#define stack_push(      stack_ptr, value    )   stack_push_      (stack_ptr, value,    INFO__ (stack_ptr))
-#define stack_peek(      stack_ptr           )   stack_peek_      (stack_ptr,           INFO__ (stack_ptr))
-#define stack_size(      stack_ptr           )   stack_size_      (stack_ptr,           INFO__ (stack_ptr)) 
-#define stack_dtor(      stack_ptr           )   stack_dtor_      (stack_ptr,           INFO__ (stack_ptr))
-#define stack_pop(       stack_ptr           )   stack_pop_       (stack_ptr,           INFO__ (stack_ptr))
-#define stack_clear(     stack_ptr           )   stack_clear_     (stack_ptr,           INFO__ (stack_ptr))
-#define stack_capacity(  stack_ptr           )   stack_capacity_  (stack_ptr,           INFO__ (stack_ptr))
-
-#define stack_resize(    stack_ptr, new_size, value_size )   stack_resize_  \
-                                                                  (stack_ptr, new_size, value_size, INFO (stack_ptr))
-                                                                                                         
-//#define stack_free_data( stack_ptr           )   stack_free_data_ (stack_ptr,           INFO (stack_ptr))
-
 
 //{----------------------------------------------------------------------------
 //!  Add an item to the top of the stack.
@@ -193,7 +212,7 @@ ON_FIRST_RUN (
 //!
 //!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
-int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);
+#define stack_push(      stack_ptr, value    )   stack_push_      (stack_ptr, value,    INFO__ (stack_ptr))
 
 //{----------------------------------------------------------------------------
 //!  Returns value of the top element of the stack.
@@ -204,8 +223,8 @@ int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);
 //!
 //!  @return Value of the top element of the stack or POISON in case of an error.
 //}----------------------------------------------------------------------------
-stack_t  stack_peek_          (stack *stack_ptr, info func_info);
-                                                                                  
+#define stack_peek(      stack_ptr           )   stack_peek_      (stack_ptr,           INFO__ (stack_ptr))
+
 //{----------------------------------------------------------------------------
 //!  Returns value of the top element of the stack and deletes it.
 //!
@@ -215,28 +234,28 @@ stack_t  stack_peek_          (stack *stack_ptr, info func_info);
 //!
 //!  @return Value of the top element of the stack or POISON in case of an error.
 //}----------------------------------------------------------------------------
-stack_t  stack_pop_           (stack *stack_ptr, info func_info);
+#define stack_pop(       stack_ptr           )   stack_pop_       (stack_ptr,           INFO__ (stack_ptr))
 
 //{----------------------------------------------------------------------------
 //!  Clears the data of stack.
 //!
 //!  @param [in] stack_ptr - a pointer to the stack; 
 //}----------------------------------------------------------------------------
-int      stack_clear_         (stack *stack_ptr, info func_info);
+#define stack_clear(     stack_ptr           )   stack_clear_     (stack_ptr,           INFO__ (stack_ptr))
 
 //{----------------------------------------------------------------------------
 //!  Returnes current size of the stack.
 //!                                               
 //!  @param [in] stack_ptr - a pointer to the stack;
 //}----------------------------------------------------------------------------
-size_t   stack_size_          (stack *stack_ptr, info func_info);
-                                                                                    
+#define stack_size(      stack_ptr           )   stack_size_      (stack_ptr,           INFO__ (stack_ptr)) 
+
 //{----------------------------------------------------------------------------
-//!  Returnes current size of the stack.
+//!  Returnes current capacity of the stack.
 //!                                               
 //!  @param [in] stack_ptr - a pointer to the stack;
 //}----------------------------------------------------------------------------
-size_t   stack_capacity_      (stack *stack_ptr, info func_info);
+#define stack_capacity(  stack_ptr           )   stack_capacity_  (stack_ptr,           INFO__ (stack_ptr))
 
 //{----------------------------------------------------------------------------
 //!  Delletes all spaces and the data of the stack. 
@@ -245,16 +264,7 @@ size_t   stack_capacity_      (stack *stack_ptr, info func_info);
 //!
 //!  @return NULL.
 //}----------------------------------------------------------------------------
-stack   *stack_dtor_          (stack *stack_ptr, info func_info);
-                                                                                  
-//{----------------------------------------------------------------------------
-//!  Frees the data of the stack. 
-//!                                               
-//!  @param [in] stack_ptr - a pointer to the stack;
-//!
-//!  @return NULL.
-//}----------------------------------------------------------------------------
-stack_t *stack_free_data     (stack *stack_ptr);
+#define stack_dtor(      stack_ptr           )   stack_dtor_      (stack_ptr,           INFO__ (stack_ptr))
 
 //{----------------------------------------------------------------------------
 //!  Changes capacity of stack.
@@ -268,7 +278,42 @@ stack_t *stack_free_data     (stack *stack_ptr);
 //!
 //!  @return In case of an error - number of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
-int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_value, info func_info);
+#define stack_resize(    stack_ptr, new_size, value_size )   stack_resize_  \
+                                                                  (stack_ptr, new_size, value_size, INFO (stack_ptr))
+
+
+
+
+//*****************************************************************************
+//
+//  Function declaration.
+//
+//*****************************************************************************
+
+
+
+
+//-----------------------------------------------------------------------------------------------------------
+                                                                                                             //
+int      stack_ctor_          (stack *stack_ptr, int new_capacity, info func_info);                          //
+                                                                                                             //
+int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);                             //
+                                                                                                             //      
+stack_t  stack_peek_          (stack *stack_ptr, info func_info);                                            //
+                                                                                                             //      
+stack_t  stack_pop_           (stack *stack_ptr, info func_info);                                            //      LOGGED
+                                                                                                             //
+int      stack_clear_         (stack *stack_ptr, info func_info);                                            //      FUNCTIONS
+                                                                                                             //      
+size_t   stack_size_          (stack *stack_ptr, info func_info);                                            //
+                                                                                                             //
+size_t   stack_capacity_      (stack *stack_ptr, info func_info);                                            //
+                                                                                                             //
+stack   *stack_dtor_          (stack *stack_ptr, info func_info);                                            //
+                                                                                                             //
+int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_value, info func_info);          //
+                                                                                                             //
+//------------------------------------------------------------------------------------------------------------
 
 //{----------------------------------------------------------------------------
 //!  Sets poison for items coming after size.
@@ -276,21 +321,6 @@ int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_valu
 //!  @param [in] stack_ptr - a pointer to the stack;
 //}----------------------------------------------------------------------------
 void     add_poison           (stack *stack_ptr);
-
-//{----------------------------------------------------------------------------
-//!  Sets the params of a previously allocated stack.
-//!
-//!  @param [in] stack_ptr    - a pointer to the stack;
-//!  @param [in] new_capacity - new number of elements of the stack;
-//1
-//!  @note In case of an error, replaces stk_err with the error number.
-//!
-//!  @warning Dont contruct a already constructed
-//!           stack to avoid memory leak.
-//!
-//!  @return In case of an error - number of error, otherwise NO_ERROR.
-//}----------------------------------------------------------------------------
-int      stack_ctor_          (stack *stack_ptr, int new_capacity, info func_info);
 
 //{----------------------------------------------------------------------------
 //!  Returnes hash of stack from stack_ptr.
@@ -356,6 +386,15 @@ static inline void print_line (FILE * file);
 static bool        is_dead    (canary_t canary);
 
 
+
+//*****************************************************************************
+//
+//  Macros for debugging and logging.
+//
+//*****************************************************************************
+
+
+
 //{----------------------------------------------------------------------------
 //!  Handles errors not in NO_DBG mode.
 //!
@@ -379,7 +418,7 @@ static bool        is_dead    (canary_t canary);
                                      "Called from function: %s\n\n"                                 \
                                      "Line: %d\n\n",                                                \
                                       type_str (stack_t), func_info.param_name, error,              \
-                                      str_error (error), stack_ptr, __FUNCSIG__,                    \
+                                      str_error (error), stack_ptr, __func__,                    \
                                       func_info.file, func_info.func, func_info.line);              \
                                                                                                     \
                     printf ("\n\n>>>FATAL ERROR!"                                                   \
@@ -469,7 +508,7 @@ ON_LOG_MODE (                                                                   
                                      "Called from function: %s\n\n"                                 \
                                      "Line: %d\n\n",                                                \
                                       type_str (stack_t), func_info.param_name, stack_ptr,          \
-                                      __FUNCSIG__, func_info.file, func_info.func, func_info.line); \
+                                      __func__, func_info.file, func_info.func, func_info.line); \
                                                                                                     \
               fprintf (LOG_FILE_PTR,                                                                \
                                 "{\n"                                                               \
@@ -491,6 +530,15 @@ ON_LOG_MODE (                                                                   
             )                                                                                       \
 
 //-----------------------------------------------------------------------------
+
+
+
+//*****************************************************************************
+//
+//  Function definition.
+//
+//*****************************************************************************
+
 
 
 int stack_ctor_ (stack *stack_ptr, int capacity, info func_info)
@@ -629,8 +677,7 @@ int stack_clear_ (stack *stack_ptr, info func_info)
     StartVerify
     StackDump
 
-    for (int i = 0; i < stack_ptr->size; ++i)
-        *(stack_ptr->data + i) = 0;
+    stack_resize_ (stack_ptr, 0, sizeof (stack_t), func_info);
 
     stack_ptr->size = 0;
 
@@ -646,19 +693,10 @@ stack *stack_dtor_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     
-    stack_ptr->data = stack_free_data (stack_ptr);
-
-    return NULL;
-    }
-                      
-
-//-----------------------------------------------------------------------------
-
-stack_t *stack_free_data (stack *stack_ptr)
-    {
-    free ((char *)stack_ptr->data ON_DEBUG_MODE ( - sizeof (canary_t) ));
-    stack_ptr->size     = 0;
-    stack_ptr->capacity = 0;
+    free (((char *)stack_ptr->data ON_DEBUG_MODE ( - sizeof (canary_t) )));
+    stack_ptr->data = NULL;
+        stack_ptr->size = -1;
+    stack_ptr->capacity = -1;
 
     return NULL;
     }
