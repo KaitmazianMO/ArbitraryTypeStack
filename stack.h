@@ -47,7 +47,7 @@
 //!  @endcode
 //!
 //!
-//!  @note To disable all verifies use NO_DEBUG.
+//!  @note To disable all verifies use NO_PROTECTION.
 //!  Example of right deasabling debug:
 //!  @code
 //!     #define NO_DEBUG
@@ -55,7 +55,6 @@
 //!     #include "stack.h"
 //!     #undef stack_t
 //!  @endcode
-//!
 //!
 //}============================================================================
 
@@ -68,11 +67,11 @@
 #include <stdlib.h>
 
 
-#ifndef NO_DEBUG
+#ifndef NO_PROTECTION
     //! The macro code will disappear from the program in the mode NO_DEBUG.
-    #define ON_DEBUG_MODE(...)  __VA_ARGS__      
+    #define ON_PROTECTION_MODE(...)  __VA_ARGS__      
 #else
-    #define ON_DEBUG_MODE(code)      
+    #define ON_PROTECTION_MODE(code)      
 #endif
 
 #ifndef NO_LOG
@@ -117,21 +116,21 @@ ON_FIRST_RUN (
 
 #define cat(struct_, separator, type)  struct_##separator##type   //!< Concatenate all params.
 #define declare(struct_, type) cat (struct_, _, type)             //!< Concatenate all params with separator '_'.
-#define stack declare (stack, stack_t)                            //!< Dcalration of struct stack.
+#define stack  declare (stack, stack_t)                           //!< Dcalration of struct stack.
 
 //!  Struct of stack with previously defined type.
 struct stack
     {
-    ON_DEBUG_MODE ( canary_t frontCanary; )     //!<  Protected canary, helps to catch random stack changes. 
+    ON_PROTECTION_MODE ( canary_t frontCanary; )      //!<  Protected canary, helps to catch random stack changes. 
 
-    ON_DEBUG_MODE ( int stack_hash;      )                       //!<  Stacks hash, helps to cath random stack changes.
-    ON_DEBUG_MODE ( int stack_data_hash; )                       //!<  Stacks data hash, helps to cath random stacks data changes.
+    ON_PROTECTION_MODE ( int stack_hash;       )      //!<  Stacks hash, helps to cath random stack changes.
+    ON_PROTECTION_MODE ( int stack_data_hash ; )      //!<  Stacks data hash, helps to cath random stacks data changes.
 
-    stack_t *data;                              //!<  Pointer to stacks data.
-    int      size;                              //!<  Current size of stack.
-    int      capacity;                          //!<  Current capacity of stack.
+    stack_t *data;                                    //!<  Pointer to stacks data.
+    int      size;                                    //!<  Current size of stack.
+    int      capacity;                                //!<  Current capacity of stack.
 
-    ON_DEBUG_MODE ( canary_t backCanary; )      //!<  Protected canary, helps to catch random stack changes.
+    ON_PROTECTION_MODE ( canary_t backCanary;  )      //!<  Protected canary, helps to catch random stack changes.
     };
 
 
@@ -435,18 +434,18 @@ static bool        is_dead    (canary_t canary);
 //-----------------------------------------------------------------------------
 
 //!  Sets stack hashes. 
-#define SetHashes(stack_ptr)  ON_DEBUG_MODE ( stack_ptr->stack_hash      = get_stack_hash      (stack_ptr); )  \
-                              ON_DEBUG_MODE ( stack_ptr->stack_data_hash = get_stack_data_hash (stack_ptr); )  
+#define SetHashes(stack_ptr)  ON_PROTECTION_MODE ( stack_ptr->stack_hash      = get_stack_hash      (stack_ptr); )  \
+                              ON_PROTECTION_MODE ( stack_ptr->stack_data_hash = get_stack_data_hash (stack_ptr); )  
 
 //!  Verifies stack at start. 
-#define StartVerify           ON_DEBUG_MODE ( Verify (stack_error  (stack_ptr)) )\
-                              ON_DEBUG_MODE ( Verify (canary_error (stack_ptr)) )\
-                              ON_DEBUG_MODE ( Verify (hash_error   (stack_ptr)) )
+#define StartVerify           ON_PROTECTION_MODE ( Verify (stack_error  (stack_ptr)) )\
+                              ON_PROTECTION_MODE ( Verify (canary_error (stack_ptr)) )\
+                              ON_PROTECTION_MODE ( Verify (hash_error   (stack_ptr)) )
 
 //!  Verifies stack at end and sets new hashes.
-#define EndVerify             ON_DEBUG_MODE ( Verify (stack_error  (stack_ptr)) )\
-                              ON_DEBUG_MODE ( Verify (canary_error (stack_ptr)) )\
-                              ON_DEBUG_MODE ( SetHashes            (stack_ptr)  )
+#define EndVerify             ON_PROTECTION_MODE ( Verify (stack_error  (stack_ptr)) )\
+                              ON_PROTECTION_MODE ( Verify (canary_error (stack_ptr)) )\
+                              ON_PROTECTION_MODE ( SetHashes            (stack_ptr)  )
    
 //-----------------------------------------------------------------------------
 
@@ -466,9 +465,9 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
     if (IS_FLOAT_TYPE(stack_t))
         if (i == 0 || i == stack_ptr->capacity + 1)
             {
-            ON_DEBUG_MODE ( 
+            ON_PROTECTION_MODE ( 
             fprintf (LOG_FILE_PTR, "[%d] = %lld (CANARY)", i - 1, CANARY (i)); 
-                          )
+                               )
             }
 
         else if (i > stack_ptr->size)                                                        
@@ -480,9 +479,9 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
     else
         if (i == 0 || i == stack_ptr->capacity + 1)
             {
-            ON_DEBUG_MODE (
+            ON_PROTECTION_MODE (
             fprintf (LOG_FILE_PTR, "[%d] = %lld (CANARY)", i - 1, CANARY (i)); 
-                          )
+                               )
             }
         else if (i > stack_ptr->size)                                                        
             fprintf (LOG_FILE_PTR, "[%d] = %lld (POISON)", i - 1, (long long)*(stack_ptr->data + i - 1));  
@@ -550,19 +549,19 @@ int stack_ctor_ (stack *stack_ptr, int capacity, info func_info)
 
 
     char *new_stack_ptr_data  = (char *)calloc (capacity * sizeof (stack_t)  
-                                                ON_DEBUG_MODE ( + 2 * sizeof (canary_t) ),
+                                                ON_PROTECTION_MODE ( + 2 * sizeof (canary_t) ),
                                                 sizeof (char));
 
     if (new_stack_ptr_data == NULL)
         return stk_err = CONSTRUCTING_ERROR;
     else
         stack_ptr->data = (stack_t *)(new_stack_ptr_data 
-                                      ON_DEBUG_MODE ( + sizeof (canary_t) ));
+                                      ON_PROTECTION_MODE ( + sizeof (canary_t) ));
 
-    ON_DEBUG_MODE ( stack_ptr->frontCanary                      = CHIRP; )
-    ON_DEBUG_MODE ( *((canary_t *)stack_ptr->data - 1)          = CHIRP; ) 
-    ON_DEBUG_MODE ( *((canary_t *)(stack_ptr->data + capacity)) = CHIRP; )
-    ON_DEBUG_MODE ( stack_ptr->backCanary                       = CHIRP; )
+    ON_PROTECTION_MODE ( stack_ptr->frontCanary                      = CHIRP; )
+    ON_PROTECTION_MODE ( *((canary_t *)stack_ptr->data - 1)          = CHIRP; ) 
+    ON_PROTECTION_MODE ( *((canary_t *)(stack_ptr->data + capacity)) = CHIRP; )
+    ON_PROTECTION_MODE ( stack_ptr->backCanary                       = CHIRP; )
 
     stack_ptr->capacity = capacity;
     stack_ptr->size     = 0;
@@ -649,22 +648,22 @@ int stack_resize_ (stack *stack_ptr, int new_capacity, int size_value, info func
     if (size_value < 0)
         return NEGATIVE_VALUE_SIZE;
 
-    char *new_data = (char *)realloc ((char *)stack_ptr->data ON_DEBUG_MODE ( -   sizeof (canary_t) ),
-                                     new_capacity*size_value  ON_DEBUG_MODE ( + 2*sizeof (canary_t) ));
+    char *new_data = (char *)realloc ((char *)stack_ptr->data ON_PROTECTION_MODE ( -   sizeof (canary_t) ),
+                                     new_capacity*size_value  ON_PROTECTION_MODE ( + 2*sizeof (canary_t) ));
 
     if (new_data == NULL)
         return stk_err = REALLOCATION_ERROR;
 
     else
         {
-        stack_ptr->data     = (stack_t *)(new_data ON_DEBUG_MODE ( + sizeof (canary_t) ));
+        stack_ptr->data     = (stack_t *)(new_data ON_PROTECTION_MODE ( + sizeof (canary_t) ));
         stack_ptr->capacity = new_capacity;
 
-        ON_DEBUG_MODE ( stack_ptr->frontCanary  = CHIRP; )
-        ON_DEBUG_MODE ( stack_ptr->backCanary   = CHIRP; )
+        ON_PROTECTION_MODE ( stack_ptr->frontCanary  = CHIRP; )
+        ON_PROTECTION_MODE ( stack_ptr->backCanary   = CHIRP; )
 
-        ON_DEBUG_MODE ( *((canary_t *)stack_ptr->data - 1)              = CHIRP; )
-        ON_DEBUG_MODE ( *((canary_t *)(stack_ptr->data + new_capacity)) = CHIRP; )
+        ON_PROTECTION_MODE ( *((canary_t *)stack_ptr->data - 1)              = CHIRP; )
+        ON_PROTECTION_MODE ( *((canary_t *)(stack_ptr->data + new_capacity)) = CHIRP; )
         add_poison (stack_ptr);
         }
 
@@ -695,7 +694,7 @@ stack *stack_dtor_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     
-    free (((char *)stack_ptr->data ON_DEBUG_MODE ( - sizeof (canary_t) )));
+    free (((char *)stack_ptr->data ON_PROTECTION_MODE ( - sizeof (canary_t) )));
     stack_ptr->data = NULL;
         stack_ptr->size = -1;
     stack_ptr->capacity = -1;
@@ -733,25 +732,25 @@ size_t stack_capacity_ (stack *stack_ptr, info func_info)
 
 int get_stack_hash (stack *stack_ptr)
     {
-    ON_DEBUG_MODE (
-                    int old_stack_hash      = stack_ptr->stack_hash;
-                    int old_stack_data_hash = stack_ptr->stack_data_hash;
+    ON_PROTECTION_MODE (
+                         int old_stack_hash      = stack_ptr->stack_hash;
+                         int old_stack_data_hash = stack_ptr->stack_data_hash;
 
-                    stack_ptr->stack_hash      = 0;
-                    stack_ptr->stack_data_hash = 0;
-                    int *hash_ptr = (int *)stack_ptr;
+                         stack_ptr->stack_hash      = 0;
+                         stack_ptr->stack_data_hash = 0;
+                         int *hash_ptr = (int *)stack_ptr;
 
-                    int new_stack_hash = 0;
+                         int new_stack_hash = 0;
     
-                    int p = 1, p_pow = INT_MAX;
-                    for (size_t i = 0; i < sizeof (*stack_ptr) / sizeof (int); ++i, p *= p_pow)
-                        new_stack_hash += *(hash_ptr + i) * p;
+                         int p = 1, p_pow = INT_MAX;
+                         for (size_t i = 0; i < sizeof (*stack_ptr) / sizeof (int); ++i, p *= p_pow)
+                             new_stack_hash += *(hash_ptr + i) * p;
 
-                    stack_ptr->stack_data_hash = old_stack_data_hash;
-                    stack_ptr->stack_hash      = old_stack_hash;
+                         stack_ptr->stack_data_hash = old_stack_data_hash;
+                         stack_ptr->stack_hash      = old_stack_hash;
 
-                    return new_stack_hash + (int)stack_ptr * p;
-                  )
+                         return new_stack_hash + (int)stack_ptr * p;
+                       ) 
         return 0;
     }
 
@@ -759,16 +758,16 @@ int get_stack_hash (stack *stack_ptr)
 
 int get_stack_data_hash (stack *stack_ptr)
     {
-    ON_DEBUG_MODE ( 
-                    int new_stack_data_hash = 0;
-                    stack_t *hash_ptr = stack_ptr->data;
+    ON_PROTECTION_MODE ( 
+                         int new_stack_data_hash = 0;
+                         stack_t *hash_ptr = stack_ptr->data;
 
-                    int p = 1, p_pow = INT_MAX;
-                    for (int i = 0; i < stack_ptr->capacity; ++i, p *= p_pow)
-                        new_stack_data_hash += (int)*(hash_ptr + i) * p;
+                         int p = 1, p_pow = INT_MAX;
+                         for (int i = 0; i < stack_ptr->capacity; ++i, p *= p_pow)
+                             new_stack_data_hash += (int)*(hash_ptr + i) * p;
 
-                    return new_stack_data_hash + (int)stack_ptr * p;
-                  )
+                         return new_stack_data_hash + (int)stack_ptr * p;
+                       )
     return 0;
     }
 
@@ -776,19 +775,19 @@ int get_stack_data_hash (stack *stack_ptr)
 
 int stack_hash_error (stack *stack_ptr)
     {
-    ON_DEBUG_MODE ( 
-                    if (stack_ptr->stack_hash != get_stack_hash (stack_ptr))
-                        return STACK_HASH_ERROR;
-                  )
+    ON_PROTECTION_MODE ( 
+                         if (stack_ptr->stack_hash != get_stack_hash (stack_ptr))
+                             return STACK_HASH_ERROR;
+                       )
     return 0;
     }
 
 int stack_data_hash_error (stack *stack_ptr)
     {
-    ON_DEBUG_MODE ( 
-                    if (stack_ptr->stack_data_hash != get_stack_data_hash (stack_ptr))
-                        return STACK_DATA_HASH_ERROR;
-                  )
+    ON_PROTECTION_MODE ( 
+                         if (stack_ptr->stack_data_hash != get_stack_data_hash (stack_ptr))
+                             return STACK_DATA_HASH_ERROR;
+                       )
     return 0;
     }
 
@@ -824,11 +823,11 @@ int stack_error (stack *stack_ptr)
 
 int canary_error (stack *stack_ptr)
     {
-    ON_DEBUG_MODE ( catch (is_dead   (stack_ptr->frontCanary),           FRONT_STACK_CANARY_ERROR); )           
-    ON_DEBUG_MODE ( catch (is_dead   (stack_ptr->backCanary),            BACK_STACK_CANARY_ERROR);  )
+    ON_PROTECTION_MODE ( catch (is_dead   (stack_ptr->frontCanary),           FRONT_STACK_CANARY_ERROR); )           
+    ON_PROTECTION_MODE ( catch (is_dead   (stack_ptr->backCanary),            BACK_STACK_CANARY_ERROR);  )
 
-    ON_DEBUG_MODE ( catch (is_dead (*((canary_t *)stack_ptr->data - 1)), FRONT_DATA_CANARY_ERROR);  )
-    ON_DEBUG_MODE ( catch (is_dead (*(canary_t *)(stack_ptr->data +                                              
+    ON_PROTECTION_MODE ( catch (is_dead (*((canary_t *)stack_ptr->data - 1)), FRONT_DATA_CANARY_ERROR);  )
+    ON_PROTECTION_MODE ( catch (is_dead (*(canary_t *)(stack_ptr->data +                                              
                                                   stack_ptr->capacity)), FRONT_DATA_CANARY_ERROR);  )
     return NO_ERROR;
     }
