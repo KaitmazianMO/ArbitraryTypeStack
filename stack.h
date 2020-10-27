@@ -402,7 +402,8 @@ bool        is_dead           (canary_t canary);
 //*****************************************************************************
 //*****************************************************************************
 
-
+#define str(lexem)      #lexem
+#define type_str(type)  str (type)
 
 //{----------------------------------------------------------------------------
 //!  Handles errors not in NO_DBG mode.
@@ -501,8 +502,6 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
 #undef CANARY
 #undef IS_FLOAT_TYPE
 
-#define str(lexem)      #lexem
-#define type_str(type)  str (type)
 
 //! Dumps stack info not in NO_LOG mode.
 #define StackDump                                                                                   \
@@ -537,6 +536,9 @@ ON_LOG_MODE (                                                                   
               fflush     (LOG_FILE_PTR);                                                            \
               }                                                                                     \
             )                                                                                       \
+
+#undef str
+#undef type_str
 
 
 
