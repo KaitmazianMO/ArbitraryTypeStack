@@ -419,17 +419,17 @@ bool        is_dead           (canary_t canary);
                     {                                                                               \
                     const char *str_err = str_error (error);                                        \
                     print_line (LOG_FILE_PTR);                                                      \
-              LOG_FILE_PTR = fopen (LOG_FILE_NAME, "a+");                                           \
-              print_line (LOG_FILE_PTR);                                                            \
+                    LOG_FILE_PTR = fopen (LOG_FILE_NAME, "a+");                                     \
+                    print_line (LOG_FILE_PTR);                                                      \
                                                                                                     \
-              fprintf (LOG_FILE_PTR, "Stack <%s> %s (ERROR: %d (%s)) [%p] \n\n"                     \
-                                     "Function: %s\n\n"                                             \
-                                     "Called from file: %s\n\n"                                     \
-                                     "Called from function: %s\n\n"                                 \
-                                     "Line: %d\n\n",                                                \
-                                      type_str (stack_t), func_info.param_name, error,              \
-                                      str_error (error), stack_ptr, __func__,                       \
-                                      func_info.file, func_info.func, func_info.line);              \
+                    fprintf (LOG_FILE_PTR, "Stack <%s> %s (ERROR: %d (%s)) [%p] \n\n"               \
+                                           "Function: %s\n\n"                                       \
+                                           "Called from file: %s\n\n"                               \
+                                           "Called from function: %s\n\n"                           \
+                                           "Line: %d\n\n",                                          \
+                                           type_str (stack_t), func_info.param_name, error,         \
+                                           str_error (error), stack_ptr, __func__,                  \
+                                           func_info.file, func_info.func, func_info.line);         \
                                                                                                     \
                     printf ("\n\n>>>FATAL ERROR!"                                                   \
                             "\n\n>>>You can find log information in file: %s\n\n", LOG_FILE_NAME);  \
