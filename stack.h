@@ -189,8 +189,8 @@ ON_FIRST_RUN (
 //*****************************************************************************
 
 
-
-#define INFO__(stack)  { __FILE__, __func__ , __LINE__, #stack }   //!<  Macro for stacndart log info.
+//!  Macro for stacndart log info.
+#define INFO__(stack)  { __FILE__, __func__ , __LINE__, #stack } 
 
 //{----------------------------------------------------------------------------
 //!  Sets the params of a previously allocated stack.
