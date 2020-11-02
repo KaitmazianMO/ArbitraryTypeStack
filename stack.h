@@ -365,7 +365,6 @@ int      hash_error           (stack *stack_ptr);
 //}----------------------------------------------------------------------------
 int      stack_verify         (stack *stack_ptr);
 
-
 //{----------------------------------------------------------------------------
 //!  Returns a string with the input number of the error.
 //!
@@ -374,7 +373,6 @@ int      stack_verify         (stack *stack_ptr);
 //!  @return A pointer to a string wiht number of the error.
 //}----------------------------------------------------------------------------
 const char *str_error         (int error);
-
 
 //{----------------------------------------------------------------------------
 //!  Prints a line in the file.
@@ -401,6 +399,8 @@ bool        is_dead           (canary_t canary);
 //
 //*****************************************************************************
 //*****************************************************************************
+
+
 
 #define str(lexem)      #lexem
 #define type_str(type)  str (type)
