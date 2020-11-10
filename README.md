@@ -16,4 +16,15 @@
    To include the library you sould use this strange command:
 
    ```#include "stack.h"```
+   
+   Now you have 2 lines:
+   ```
+      #define stack_t int
+      #include "stack.h"
+   ```
+      
+   That means you can use new type: **stack_int**
+   
+   
+   
     
