@@ -29,6 +29,7 @@
    That means you can use new type: **stack_int**
    
   ### Using stack
+  
    After you include the library right you can declare varriable. So do it:
    
    ```stack_int stk = {};```
@@ -38,6 +39,7 @@
    ```stack_ctor (&stack_with_type_int, 14)```
    
    **Now you can use stack function!**
+   
    Examples of stack functions: 
    
    stack_dtor      (stack_ptr       ) - *Delletes all spaces and the data of the stack.* 
