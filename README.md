@@ -9,6 +9,7 @@
    #define stack_t **type**
     
    Example of setting int type:
+   
    ```#define stack_t int```
 
   ### Iclude the library after you set the type of stack
