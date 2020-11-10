@@ -41,12 +41,19 @@
    Examples of stack functions: 
    
    stack_dtor      (stack_ptr       ) - *Delletes all spaces and the data of the stack.* 
+   
    stack_push      (stack_ptr, value) - *Add an item to the top of the stack.*
+   
    stack_peek      (stack_ptr       ) - *Returns value of the top element of the stack.*
+   
    stack_pop       (stack_ptr       ) - *Returns value of the top element of the stack and deletes it.*
+   
    stack_free_data ( stack_ptr      ) - *Clears the data of stack.*
+   
    stack_size      (stack_ptr       ) - *Returnes current size of the stack.*
+   
    stack_capacity  (stack_ptr       ) - *Returnes current capacity of the stack.*
+   
    stack_resize    (stack_ptr, 
                     new_size, 
                     value_size      ) - *I should modificate this strange function....*
