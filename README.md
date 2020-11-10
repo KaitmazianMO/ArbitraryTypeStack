@@ -6,9 +6,7 @@
 
    To set the type of stack write this line:
 
-   '''#define stack_t **type (bold)**
-    
-   **type (bold)**
+   '''#define stack_t **type**
     
    Example of setting int type:
    '''#define stack_t int
