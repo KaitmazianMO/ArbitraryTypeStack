@@ -68,7 +68,7 @@
    
    ```stack_ctor (&stack_with_type_int, 14)```
    
-   **Now you can use stack function!**
+   **Now you can use stack functions!**
    
    Examples of stack functions: 
    
@@ -80,7 +80,7 @@
    
    stack_pop       (stack_ptr       ) - *Returns value of the top element of the stack and deletes it.*
    
-   stack_free_data ( stack_ptr      ) - *Clears the data of stack.*
+   stack_free_data (stack_ptr       ) - *Clears the data of stack.*
    
    stack_size      (stack_ptr       ) - *Returnes current size of the stack.*
    
@@ -89,6 +89,8 @@
    stack_resize    (stack_ptr, 
                     new_size, 
                     value_size      ) - *I should modificate this strange function....*
-
+                    
+  ## How to use protection and logs                    
+  
    
     
