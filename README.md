@@ -8,6 +8,8 @@
 
     '''#define stack_t ** type (bold) **
     
+    ** type (bold) **
+    
     Example of setting int type:
     '''#define stack_t int
 
