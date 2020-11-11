@@ -74,7 +74,7 @@
    
    stack_dtor      (stack_ptr       ) - *Distrcuts the stack.* **NEVER FORGET TO DISTRUCT THE STACK**
    
-   stack_push      (stack_ptr, value) - *Add an item to the top of the stack.*
+   stack_push      (stack_ptr, value) - *Adds an item to the top of the stack.*
    
    stack_peek      (stack_ptr       ) - *Returns value of the top element of the stack.*
    
