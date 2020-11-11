@@ -36,7 +36,7 @@
 
    To set the type of stack you sould use this strange command:
 
-   #define stack_t **type**
+   *#define stack_t **type***
     
    Example of setting int type:
    
@@ -64,7 +64,7 @@
    
    ```stack_int stk = {};```
    
-   To start work with stack by stack functuons construct your stack **stk** by function stack_ctor with start capcity **capacity** (for example capcity is 14):
+   To start work with stack by stack functuons construct your stack **stk** by function *stack_ctor* with start capcity **capacity** (for example capcity is 14):
    
    ```stack_ctor (&stk, 14);```
    
@@ -72,23 +72,25 @@
    
    Examples of stack functions: 
    
-   stack_dtor      (stack_ptr       ) - *Distrcuts the stack.* **NEVER FORGET TO DISTRUCT THE STACK**
+   *stack_dtor      (stack_ptr       )* - Distrcuts the stack. **NEVER FORGET TO DISTRUCT THE STACK**
    
-   stack_push      (stack_ptr, value) - *Adds an item to the top of the stack.*
+   *stack_ctor      (stack_ptr, capacity)* - Constructs the stack.     
    
-   stack_peek      (stack_ptr       ) - *Returns value of the top element of the stack.*
+   *stack_push      (stack_ptr, value)* - Adds an item to the top of the stack.
    
-   stack_pop       (stack_ptr       ) - *Returns value of the top element of the stack and deletes it.*
+   *stack_peek      (stack_ptr       )* - Returns value of the top element of the stack.
    
-   stack_free_data (stack_ptr       ) - *Clears the data of stack.*
+   *stack_pop       (stack_ptr       )* - Returns value of the top element of the stack and deletes it.
    
-   stack_size      (stack_ptr       ) - *Returnes current size of the stack.*
+   *stack_free_data (stack_ptr       )* - Clears the data of stack.
    
-   stack_capacity  (stack_ptr       ) - *Returnes current capacity of the stack.*
+   *stack_size      (stack_ptr       )* - Returnes current size of the stack.
    
-   stack_resize    (stack_ptr, 
+   *stack_capacity  (stack_ptr       )* - Returnes current capacity of the stack.
+   
+   *stack_resize    (stack_ptr, 
                     new_size, 
-                    value_size      ) - *I should modificate this strange function....*
+                    value_size      )* - I should modificate this strange function....
                     
   ## How to use protection and logs                    
   
