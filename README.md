@@ -43,6 +43,7 @@
    ```#define stack_t int```
    
    **Warning:** for stack_t you can use only standart types with no spaces notation!
+   To use types with sapses declaraion use *typedef*.
 
   ### Iclude the library after you set the type of stack
 
