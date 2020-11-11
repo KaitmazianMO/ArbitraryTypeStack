@@ -60,7 +60,7 @@
    
   ### Using stack
   
-   After you include the library right you can declare varriable. So do it:
+   After you include the library right you can declare varriable with type stack_**type**. So do it:
    
    ```stack_int stk = {};```
    
