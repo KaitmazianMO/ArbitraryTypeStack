@@ -66,7 +66,7 @@
    
    To start work with stack by stack functuons construct your stack **stk** by function stack_ctor with start capcity **capacity** (for example capcity is 14):
    
-   ```stack_ctor (&stack_with_type_int, 14);```
+   ```stack_ctor (&stk, 14);```
    
    **Now you can use stack functions!**
    
