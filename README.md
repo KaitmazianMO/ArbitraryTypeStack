@@ -60,11 +60,11 @@
    
   ### Using stack
   
-   After you include the library right you can declare varriable with type stack_**type**. So do it:
+   After you include the library right you can declare varriable with type *stack_**type***. So do it:
    
    ```stack_int stk = {};```
    
-   To start work with stack by stack functuons construct your stack **stk** by function *stack_ctor* with start capcity **capacity** (for example capcity is 14):
+   To start work with stack by stack functuons construct your stack ***stk*** by function *stack_ctor* with start capcity ***capacity*** (for example capcity is 14):
    
    ```stack_ctor (&stk, 14);```
    
