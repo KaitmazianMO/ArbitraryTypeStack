@@ -72,7 +72,7 @@
    
    Examples of stack functions: 
    
-   stack_dtor      (stack_ptr       ) - *Delletes all spaces and the data of the stack.* **NEVER FORGET TO DISTRUCT THE STACK**
+   stack_dtor      (stack_ptr       ) - *Distrcuts the stack.* **NEVER FORGET TO DISTRUCT THE STACK**
    
    stack_push      (stack_ptr, value) - *Add an item to the top of the stack.*
    
