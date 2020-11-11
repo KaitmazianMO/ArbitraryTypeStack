@@ -34,7 +34,7 @@
 
   ### Set type of stack first!
 
-   To set the type of stack write this line:
+   To set the type of stack you sould use this strange command:
 
    #define stack_t **type**
     
@@ -46,7 +46,7 @@
 
   ### Iclude the library after you set the type of stack
 
-   To include the library you sould use this strange command:
+   To include the library you sould use this command:
 
    ```#include "stack.h"```
    
