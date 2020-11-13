@@ -302,23 +302,23 @@ ON_FIRST_RUN (
 
 //-----------------------------------------------------------------------------------------------------------
                                                                                                              //
-int      stack_ctor_          (stack *stack_ptr, int new_capacity, info func_info);                          //
+static int      stack_ctor_          (stack *stack_ptr, int new_capacity, info func_info);                          //
                                                                                                              //
-int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);                             //
+static int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);                             //
                                                                                                              //      
-stack_t  stack_peek_          (stack *stack_ptr, info func_info);                                            //
+static stack_t  stack_peek_          (stack *stack_ptr, info func_info);                                            //
                                                                                                              //      
-stack_t  stack_pop_           (stack *stack_ptr, info func_info);                                            //      LOGGED
+static stack_t  stack_pop_           (stack *stack_ptr, info func_info);                                            //      LOGGED
                                                                                                              //
-int      stack_free_data_     (stack *stack_ptr, info func_info);                                            //      FUNCTIONS
+static int      stack_free_data_     (stack *stack_ptr, info func_info);                                            //      FUNCTIONS
                                                                                                              //      
-size_t   stack_size_          (stack *stack_ptr, info func_info);                                            //
+static size_t   stack_size_          (stack *stack_ptr, info func_info);                                            //
                                                                                                              //
-size_t   stack_capacity_      (stack *stack_ptr, info func_info);                                            //
+static size_t   stack_capacity_      (stack *stack_ptr, info func_info);                                            //
                                                                                                              //
-stack   *stack_dtor_          (stack *stack_ptr, info func_info);                                            //
+static stack   *stack_dtor_          (stack *stack_ptr, info func_info);                                            //
                                                                                                              //
-int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_value, info func_info);          //
+static int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_value, info func_info);          //
                                                                                                              //
 //------------------------------------------------------------------------------------------------------------
 
@@ -327,43 +327,44 @@ int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_valu
 //!
 //!  @param [in] stack_ptr - a pointer to the stack;
 //}----------------------------------------------------------------------------
-void     add_poison           (stack *stack_ptr);
+static void     add_poison           (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Returnes hash of stack from stack_ptr.
 //}----------------------------------------------------------------------------
-int      get_stack_hash       (stack *stack_ptr);
+static int      get_stack_hash       (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Returnes hash of stacks data from stack_ptr.
 //}----------------------------------------------------------------------------
-int      get_stack_data_hash  (stack *stack_ptr);
+static int      get_stack_data_hash  (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //! Checks is all elements after size are POISON.
 //}----------------------------------------------------------------------------
-int      poison_error         (stack *stack_ptr);
+static int      poison_error         (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Returnes errors of stacks spaces is case of an error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
-int      stack_error          (stack *stack_ptr);
+static int      stack_error          (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Returnes canary errors is case of an error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
-int      canary_error         (stack *stack_ptr);
+static int      canary_error         (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Returnes hash errors is case of an error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
-int      hash_error           (stack *stack_ptr);
+static int      hash_error           (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Returnes all erros that can happend with the stack
 //!  is case of error, otherwise NO_ERROR.
 //}----------------------------------------------------------------------------
-int      stack_verify         (stack *stack_ptr);
+static int      stack_verify         (stack *stack_ptr);
+
 
 //{----------------------------------------------------------------------------
 //!  Returns a string with the input number of the error.
@@ -372,14 +373,15 @@ int      stack_verify         (stack *stack_ptr);
 //!
 //!  @return A pointer to a string wiht number of the error.
 //}----------------------------------------------------------------------------
-const char *str_error         (int error);
+static const char *str_error         (int error);
+
 
 //{----------------------------------------------------------------------------
 //!  Prints a line in the file.
 //!
 //!  @param [in] file - a pointer to a file to print;
 //}----------------------------------------------------------------------------
-void        print_line        (FILE * file);
+static void        print_line        (FILE * file);
 
 //{----------------------------------------------------------------------------
 //!  Verifies input canary.
@@ -388,7 +390,7 @@ void        print_line        (FILE * file);
 //!
 //!  @return true if canary is OK, otherwise false.
 //}----------------------------------------------------------------------------
-bool        is_dead           (canary_t canary);
+static bool        is_dead           (canary_t canary);
 
 
 
@@ -401,9 +403,6 @@ bool        is_dead           (canary_t canary);
 //*****************************************************************************
 
 
-
-#define str(lexem)      #lexem
-#define type_str(type)  str (type)
 
 //{----------------------------------------------------------------------------
 //!  Handles errors not in NO_DBG mode.
@@ -419,17 +418,17 @@ bool        is_dead           (canary_t canary);
                     {                                                                               \
                     const char *str_err = str_error (error);                                        \
                     print_line (LOG_FILE_PTR);                                                      \
-                    LOG_FILE_PTR = fopen (LOG_FILE_NAME, "a+");                                     \
-                    print_line (LOG_FILE_PTR);                                                      \
+              LOG_FILE_PTR = fopen (LOG_FILE_NAME, "a+");                                           \
+              print_line (LOG_FILE_PTR);                                                            \
                                                                                                     \
-                    fprintf (LOG_FILE_PTR, "Stack <%s> %s (ERROR: %d (%s)) [%p] \n\n"               \
-                                           "Function: %s\n\n"                                       \
-                                           "Called from file: %s\n\n"                               \
-                                           "Called from function: %s\n\n"                           \
-                                           "Line: %d\n\n",                                          \
-                                           type_str (stack_t), func_info.param_name, error,         \
-                                           str_error (error), stack_ptr, __func__,                  \
-                                           func_info.file, func_info.func, func_info.line);         \
+              fprintf (LOG_FILE_PTR, "Stack <%s> %s (ERROR: %d (%s)) [%p] \n\n"                     \
+                                     "Function: %s\n\n"                                             \
+                                     "Called from file: %s\n\n"                                     \
+                                     "Called from function: %s\n\n"                                 \
+                                     "Line: %d\n\n",                                                \
+                                      type_str (stack_t), func_info.param_name, error,              \
+                                      str_error (error), stack_ptr, __func__,                       \
+                                      func_info.file, func_info.func, func_info.line);              \
                                                                                                     \
                     printf ("\n\n>>>FATAL ERROR!"                                                   \
                             "\n\n>>>You can find log information in file: %s\n\n", LOG_FILE_NAME);  \
@@ -464,7 +463,7 @@ bool        is_dead           (canary_t canary);
                        ((i == 0) ? sizeof(canary_t) : sizeof (stack_t))) 
 
 //!  Prints arbitrary type element.
-void PrintElem (FILE *file, stack *stack_ptr, int i)
+static void PrintElem (FILE *file, stack *stack_ptr, int i)
     {
     if (i <= stack_ptr->size && i != 0) 
         fprintf (LOG_FILE_PTR, "\r\t   *");        
@@ -502,6 +501,8 @@ void PrintElem (FILE *file, stack *stack_ptr, int i)
 #undef CANARY
 #undef IS_FLOAT_TYPE
 
+#define str(lexem)      #lexem
+#define type_str(type)  str (type)
 
 //! Dumps stack info not in NO_LOG mode.
 #define StackDump                                                                                   \
@@ -537,9 +538,6 @@ ON_LOG_MODE (                                                                   
               }                                                                                     \
             )                                                                                       \
 
-#undef str
-#undef type_str
-
 
 
 //*****************************************************************************
@@ -552,7 +550,7 @@ ON_LOG_MODE (                                                                   
 
 
 
-int stack_ctor_ (stack *stack_ptr, int capacity, info func_info)
+static int stack_ctor_ (stack *stack_ptr, int capacity, info func_info)
     {
     if (!stack_ptr)   return stk_err = NULL_STACK_PTR;
     if (capacity < 0) return stk_err = NEGATIVE_CAPACITY;
@@ -586,7 +584,7 @@ int stack_ctor_ (stack *stack_ptr, int capacity, info func_info)
 
 //-----------------------------------------------------------------------------
 
-int stack_push_ (stack *stack_ptr, stack_t value, info func_info)
+static int stack_push_ (stack *stack_ptr, stack_t value, info func_info)
     {
     StartVerify
     StackDump
@@ -608,7 +606,7 @@ int stack_push_ (stack *stack_ptr, stack_t value, info func_info)
 
 //-----------------------------------------------------------------------------
 
-stack_t stack_pop_ (stack *stack_ptr, info func_info)
+static stack_t stack_pop_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     StackDump
@@ -632,7 +630,7 @@ stack_t stack_pop_ (stack *stack_ptr, info func_info)
 
 //-----------------------------------------------------------------------------
 
-stack_t stack_peek_ (stack *stack_ptr, info func_info)
+static stack_t stack_peek_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     StackDump
@@ -648,7 +646,7 @@ stack_t stack_peek_ (stack *stack_ptr, info func_info)
 
 //-----------------------------------------------------------------------------
 
-int stack_resize_ (stack *stack_ptr, int new_capacity, int size_value, info func_info)
+static int stack_resize_ (stack *stack_ptr, int new_capacity, int size_value, info func_info)
     {
     StartVerify
 
@@ -683,7 +681,7 @@ int stack_resize_ (stack *stack_ptr, int new_capacity, int size_value, info func
 
 //-----------------------------------------------------------------------------
 
-int stack_free_data_ (stack *stack_ptr, info func_info)
+static int stack_free_data_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     StackDump
@@ -700,7 +698,7 @@ int stack_free_data_ (stack *stack_ptr, info func_info)
 
 //-----------------------------------------------------------------------------
 
-stack *stack_dtor_ (stack *stack_ptr, info func_info)
+static stack *stack_dtor_ (stack *stack_ptr, info func_info)
     {
     StartVerify
     
@@ -714,7 +712,7 @@ stack *stack_dtor_ (stack *stack_ptr, info func_info)
 
 //-----------------------------------------------------------------------------
 
-void add_poison (stack *stack_ptr)
+static void add_poison (stack *stack_ptr)
     {
     for (int i = stack_ptr->size; i < stack_ptr->capacity; ++i)
         *(stack_ptr->data + i) = POISON;
@@ -722,7 +720,7 @@ void add_poison (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-size_t stack_size_ (stack *stack_ptr, info func_info)
+static size_t stack_size_ (stack *stack_ptr, info func_info)
     {
     StartVerify
 
@@ -731,7 +729,7 @@ size_t stack_size_ (stack *stack_ptr, info func_info)
 
 //-----------------------------------------------------------------------------
 
-size_t stack_capacity_ (stack *stack_ptr, info func_info)
+static size_t stack_capacity_ (stack *stack_ptr, info func_info)
     {
     StartVerify
 
@@ -740,7 +738,7 @@ size_t stack_capacity_ (stack *stack_ptr, info func_info)
 
 //-----------------------------------------------------------------------------
 
-int get_stack_hash (stack *stack_ptr)
+static int get_stack_hash (stack *stack_ptr)
     {
     ON_PROTECTION_MODE (
                          int old_stack_hash      = stack_ptr->stack_hash;
@@ -766,7 +764,7 @@ int get_stack_hash (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int get_stack_data_hash (stack *stack_ptr)
+static int get_stack_data_hash (stack *stack_ptr)
     {
     ON_PROTECTION_MODE ( 
                          int new_stack_data_hash = 0;
@@ -783,7 +781,7 @@ int get_stack_data_hash (stack *stack_ptr)
 
 //-----------------------------------------------------------------------------
 
-int stack_hash_error (stack *stack_ptr)
+static int stack_hash_error (stack *stack_ptr)
     {
     ON_PROTECTION_MODE ( 
                          if (stack_ptr->stack_hash != get_stack_hash (stack_ptr))
@@ -806,7 +804,7 @@ int stack_data_hash_error (stack *stack_ptr)
 #define catch(condition, err_num) if (condition) return err_num;
 
 
-int stack_verify (stack *stack_ptr)
+static int stack_verify (stack *stack_ptr)
     {  
     int err_num = 0;
 
@@ -819,7 +817,7 @@ int stack_verify (stack *stack_ptr)
     return NO_ERROR;
     }
 
-int stack_error (stack *stack_ptr)
+static int stack_error (stack *stack_ptr)
     {
     catch (stack_ptr           == NULL,  NULL_STACK_PTR         ); 
     catch (stack_ptr->data     == NULL,  NULL_STACK_DATA_PTR    ); 
@@ -831,7 +829,7 @@ int stack_error (stack *stack_ptr)
     return NO_ERROR;
     }
 
-int canary_error (stack *stack_ptr)
+static int canary_error (stack *stack_ptr)
     {
     ON_PROTECTION_MODE ( catch (is_dead   (stack_ptr->frontCanary),           FRONT_STACK_CANARY_ERROR); )           
     ON_PROTECTION_MODE ( catch (is_dead   (stack_ptr->backCanary),            BACK_STACK_CANARY_ERROR);  )
@@ -842,14 +840,14 @@ int canary_error (stack *stack_ptr)
     return NO_ERROR;
     }
 
-int hash_error (stack *stack_ptr)
+static int hash_error (stack *stack_ptr)
     {
     catch (stack_hash_error      (stack_ptr), STACK_HASH_ERROR     );
     catch (stack_data_hash_error (stack_ptr), STACK_DATA_HASH_ERROR);
     return NO_ERROR;
     }
 
-int poison_error (stack *stack_ptr)
+static int poison_error (stack *stack_ptr)
     {
     for (int i = stack_ptr->size; i < stack_ptr->capacity; ++i)
         if (*(stack_ptr->data + i) != POISON)
