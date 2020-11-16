@@ -116,9 +116,9 @@ ON_FIRST_RUN (
 
 #define POISON  0    //!<  Value for unused data spaces.
 
-#define cat(struct_, separator, type)  struct_##separator##type   //!< Concatenate all params.
-#define declare(struct_, type) cat (struct_, _, type)             //!< Concatenate all params with separator '_'.
-#define stack  declare (stack, stack_t)                           //!< Dcalration of struct stack.
+#define cat( struct_, separator, type )  struct_##separator##type   //!< Concatenate all params.
+#define declare( struct_, type )         cat (struct_, _, type)     //!< Concatenate all params with separator '_'.
+#define stack                            declare (stack, stack_t)   //!< Dcalration of struct stack.
 
 //!  Struct of stack with previously defined type.
 struct stack
