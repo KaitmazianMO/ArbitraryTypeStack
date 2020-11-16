@@ -302,23 +302,23 @@ ON_FIRST_RUN (
 
 //-----------------------------------------------------------------------------------------------------------
                                                                                                              //
-static int      stack_ctor_          (stack *stack_ptr, int new_capacity, info func_info);                          //
+static int      stack_ctor_          (stack *stack_ptr, int new_capacity, info func_info);                   //
                                                                                                              //
-static int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);                             //
+static int      stack_push_          (stack *stack_ptr, stack_t value, info func_info);                      //
                                                                                                              //      
-static stack_t  stack_peek_          (stack *stack_ptr, info func_info);                                            //
+static stack_t  stack_peek_          (stack *stack_ptr, info func_info);                                     //
                                                                                                              //      
-static stack_t  stack_pop_           (stack *stack_ptr, info func_info);                                            //      LOGGED
+static stack_t  stack_pop_           (stack *stack_ptr, info func_info);                                     //      LOGGED
                                                                                                              //
-static int      stack_free_data_     (stack *stack_ptr, info func_info);                                            //      FUNCTIONS
+static int      stack_free_data_     (stack *stack_ptr, info func_info);                                     //      FUNCTIONS
                                                                                                              //      
-static size_t   stack_size_          (stack *stack_ptr, info func_info);                                            //
+static size_t   stack_size_          (stack *stack_ptr, info func_info);                                     //
                                                                                                              //
-static size_t   stack_capacity_      (stack *stack_ptr, info func_info);                                            //
+static size_t   stack_capacity_      (stack *stack_ptr, info func_info);                                     //
                                                                                                              //
-static stack   *stack_dtor_          (stack *stack_ptr, info func_info);                                            //
+static stack   *stack_dtor_          (stack *stack_ptr, info func_info);                                     //
                                                                                                              //
-static int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_value, info func_info);          //
+static int      stack_resize_        (stack *stack_ptr, int new_capacity, int size_value, info func_info);   //
                                                                                                              //
 //------------------------------------------------------------------------------------------------------------
 
