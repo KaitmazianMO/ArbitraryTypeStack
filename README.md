@@ -74,7 +74,7 @@
    
    Examples of stack functions: 
    
-   ```stack_dtor    (stack_ptr)``` - Distrcuts the stack. **NEVER FORGET TO DISTRUCT THE STACK**
+   ```stack_dtor    (stack_ptr)``` - Distrcuts the stack.
    
    ```stack_ctor    (stack_ptr, capacity)``` - Constructs the stack.     
    
