@@ -66,7 +66,7 @@
    
    ```stack_int stk = {};```
    
-   To start work with stack by stack functuons construct your stack ***stk*** by function *stack_ctor* with start capcity ***capacity*** (for example capcity is 14):
+   To start work with stack by stack functuons construct your stack *stk* by function *stack_ctor* with start capcity *capacity* (for example capcity is 14):
    
    ```stack_ctor (&stk, 14);```
    
