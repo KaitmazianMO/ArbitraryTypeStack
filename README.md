@@ -74,13 +74,13 @@
    
    Examples of stack functions: 
    
-   ```stack_dtor      (stack_ptr       )``` - Distrcuts the stack. **NEVER FORGET TO DISTRUCT THE STACK**
+   ```stack_dtor    (stack_ptr)``` - Distrcuts the stack. **NEVER FORGET TO DISTRUCT THE STACK**
    
-   *stack_ctor      (stack_ptr, capacity)* - Constructs the stack.     
+   ```stack_ctor    (stack_ptr, capacity)``` - Constructs the stack.     
    
-   *stack_push      (stack_ptr, value)* - Adds an item to the top of the stack.
+   ```stack_push    (stack_ptr, value)``` - Adds an item to the top of the stack.
    
-   *stack_peek      (stack_ptr       )* - Returns value of the top element of the stack.
+   ```stack_peek    (stack_ptr          )``` - Returns value of the top element of the stack.
    
    *stack_pop       (stack_ptr       )* - Returns value of the top element of the stack and deletes it.
    
