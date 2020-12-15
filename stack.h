@@ -57,6 +57,7 @@
 //!  @endcode
 //!
 //!  @todo Write logs for the only one file.
+//!  @todo Refactor resize function.
 //!
 //}============================================================================
 
