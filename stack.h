@@ -109,15 +109,20 @@
 #endif
 
 ON_FIRST_RUN (
-               FILE *LOG_FILE_PTR = NULL;    //!<  Pointer to log file.
+               FILE *LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w");    //!<  Pointer to log file.
 
                typedef long long canary_t;     
-               static const canary_t CHIRP = 0xAEAEAAEAAEAE;    //!<  Right canaries value.   
+               static const canary_t CHIRP = 0xAEAEAAEAAEAE;       //!<  Right canaries value.   
 
                int stk_err = 0;    //!<  Number of last stack error, only one for every stack.
              )
 
 #define POISON  0    //!<  Value for unused data spaces.
+
+#ifndef stack_t 
+#define stack_t double
+#endif 
+
 
 #define cat( struct_, separator, type )  struct_##separator##type   //!< Concatenate all params.
 #define declare( struct_, type )         cat (struct_, _, type)     //!< Concatenate all params with separator '_'.
@@ -469,7 +474,7 @@ static bool        is_dead           (canary_t canary);
 static void PrintElem (FILE *file, stack *stack_ptr, int i)
     {
     if (i <= stack_ptr->size && i != 0) 
-        fprintf (LOG_FILE_PTR, "\r\t   *");        
+        fprintf (LOG_FILE_PTR, "\r\t       *");        
     else
         fprintf (LOG_FILE_PTR, "\r\t\t");           
 
@@ -477,28 +482,28 @@ static void PrintElem (FILE *file, stack *stack_ptr, int i)
         if (i == 0 || i == stack_ptr->capacity + 1)
             {
             ON_PROTECTION_MODE ( 
-            fprintf (LOG_FILE_PTR, "[%d] = %lld (CANARY)", i - 1, CANARY (i)); 
+            fprintf (LOG_FILE_PTR, "[%d] = %lld (CANARY)\n", i - 1, CANARY (i)); 
                                )
             }
 
         else if (i > stack_ptr->size)                                                        
-            fprintf (LOG_FILE_PTR, "[%d] = %lg  (POISON)", i - 1, (double)*(stack_ptr->data + i - 1));  
+            fprintf (LOG_FILE_PTR, "[%d] = %lg  (POISON)\n", i - 1, (double)*(stack_ptr->data + i - 1));  
             
         else                                                                                 
-            fprintf (LOG_FILE_PTR, "[%d] = %lg\n",         i - 1, (double)*(stack_ptr->data + i - 1));
+            fprintf (LOG_FILE_PTR, "[%d] = %lg\n",           i - 1, (double)*(stack_ptr->data + i - 1));
 
     else
         if (i == 0 || i == stack_ptr->capacity + 1)
             {
             ON_PROTECTION_MODE (
-            fprintf (LOG_FILE_PTR, "[%d] = %lld (CANARY)", i - 1, CANARY (i)); 
+            fprintf (LOG_FILE_PTR, "[%d] = %lld (CANARY)\n", i - 1, CANARY (i)); 
                                )
             }
         else if (i > stack_ptr->size)                                                        
-            fprintf (LOG_FILE_PTR, "[%d] = %lld (POISON)", i - 1, (long long)*(stack_ptr->data + i - 1));  
+            fprintf (LOG_FILE_PTR, "[%d] = %lld (POISON)\n", i - 1, (long long)*(stack_ptr->data + i - 1));  
             
         else                                                                                 
-            fprintf (LOG_FILE_PTR, "[%d] = %lld",          i - 1, (long long)*(stack_ptr->data + i - 1));
+            fprintf (LOG_FILE_PTR, "[%d] = %lld\n",          i - 1, (long long)*(stack_ptr->data + i - 1));
     }
 
 #undef CANARY
@@ -508,38 +513,39 @@ static void PrintElem (FILE *file, stack *stack_ptr, int i)
 #define type_str(type)  str (type)
 
 //! Dumps stack info not in NO_LOG mode.
-#define StackDump                                                                                   \
-ON_LOG_MODE (                                                                                       \
-              {                                                                                     \
-              LOG_FILE_PTR = fopen (LOG_FILE_NAME, "a+");                                           \
-              print_line (LOG_FILE_PTR);                                                            \
-                                                                                                    \
-              fprintf (LOG_FILE_PTR, "Stack <%s> %s (OK) [%p] \n\n"                                 \
-                                     "Function: %s\n\n"                                             \
-                                     "Called from file: %s\n\n"                                     \
-                                     "Called from function: %s\n\n"                                 \
-                                     "Line: %d\n\n",                                                \
-                                      type_str (stack_t), func_info.param_name, stack_ptr,          \
-                                      __func__, func_info.file, func_info.func, func_info.line);    \
-                                                                                                    \
-              fprintf (LOG_FILE_PTR,                                                                \
-                                "{\n"                                                               \
-                                "\tsize     = %d\n"                                                 \
-                                "\tcapasity = %d\n"                                                 \
-                                "\tdata[%p]\n\t{",                                                  \
-                                 stack_ptr->size,                                                   \
-                                 stack_ptr->capacity,                                               \
-                                 stack_ptr->data);                                                  \
-                                                                                                    \
-              for (int i = 0; i <= stack_ptr->capacity + 1; ++i)                                    \
-                  PrintElem (LOG_FILE_PTR, stack_ptr, i);                                           \
-                                                                                                    \
-              fprintf (LOG_FILE_PTR, "\r\t}\n}\n");                                                 \
-                                                                                                    \
-              print_line (LOG_FILE_PTR);                                                            \
-              fflush     (LOG_FILE_PTR);                                                            \
-              }                                                                                     \
-            )                                                                                       \
+#define StackDump                                                                                       \
+ON_LOG_MODE (                                                                                           \
+              {                                                                                         \
+              if (LOG_FILE_PTR)                                                                        \
+                  {                                                                                     \
+                  fprintf (LOG_FILE_PTR, "Stack <%s> %s (OK) [%p] \n\n"                                 \
+                                         "Function: %s\n\n"                                             \
+                                         "Called from file: %s\n\n"                                     \
+                                         "Called from function: %s\n\n"                                 \
+                                         "Line: %d\n\n",                                                \
+                                          type_str (stack_t), func_info.param_name, stack_ptr,          \
+                                          __func__, func_info.file, func_info.func, func_info.line);    \
+                                                                                                        \
+                  fprintf (LOG_FILE_PTR,                                                                \
+                                    "{\n"                                                               \
+                                    "\tsize     = %d\n"                                                 \
+                                    "\tcapasity = %d\n"                                                 \
+                                    "\tdata[%p]\n\t{\n",                                                \
+                                     stack_ptr->size,                                                   \
+                                     stack_ptr->capacity,                                               \
+                                     stack_ptr->data);                                                  \
+                                                                                                        \
+                  for (int i = 0; i <= stack_ptr->capacity + 1; ++i)                                    \
+                      PrintElem (LOG_FILE_PTR, stack_ptr, i);                                           \
+                                                                                                        \
+                  fprintf (LOG_FILE_PTR, "\r\t}\n}\n");                                                 \
+                                                                                                        \
+                  print_line (LOG_FILE_PTR);                                                            \
+                  fflush     (LOG_FILE_PTR);                                                            \
+                  }                                                                                     \
+                }                                                                                       \
+            )                                                                                           \
+
 
 
 
@@ -923,4 +929,3 @@ ON_FIRST_RUN (
 #undef ON_PROTECTION_MODE
 #undef ONLOG_MODE
 #define ANOTHER_STACK    //!< Used by other stack types to avoid double-inclusion errors.
-
