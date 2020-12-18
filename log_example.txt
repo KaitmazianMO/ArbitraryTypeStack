@@ -1,0 +1,924 @@
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_ctor_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 10
+
+{
+	size     = 0
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+		[0] = 0  (POISON)
+
+		[1] = 0  (POISON)
+
+		[2] = 0  (POISON)
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 0
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+		[0] = 0  (POISON)
+
+		[1] = 0  (POISON)
+
+		[2] = 0  (POISON)
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 1
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+		[1] = 0  (POISON)
+
+		[2] = 0  (POISON)
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 1
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+		[1] = 0  (POISON)
+
+		[2] = 0  (POISON)
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 2
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+		[2] = 0  (POISON)
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 2
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+		[2] = 0  (POISON)
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 3
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 3
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+		[3] = 0  (POISON)
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 4
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 4
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+		[4] = 0  (POISON)
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 5
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 5
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+		[5] = 0  (POISON)
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 6
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 6
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+		[6] = 0  (POISON)
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 7
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 7
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+		[7] = 0  (POISON)
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 8
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+	       *[7] = 3.21
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 8
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+	       *[7] = 3.21
+
+		[8] = 0  (POISON)
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 9
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+	       *[7] = 3.21
+
+	       *[8] = 3.22
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 9
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+	       *[7] = 3.21
+
+	       *[8] = 3.22
+
+		[9] = 0  (POISON)
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
+Stack <double> &stk (OK) [003FF8F8] 
+
+Function: stack_push_
+
+Called from file: D:\___MY__PROJECTS___\Stack\Stack\main.cpp
+
+Called from function: main
+
+Line: 13
+
+{
+	size     = 10
+	capasity = 10
+	data[004DAD58]
+	{
+
+		[-1] = 192065215049390 (CANARY)
+
+	       *[0] = 3.14
+
+	       *[1] = 3.15
+
+	       *[2] = 3.16
+
+	       *[3] = 3.17
+
+	       *[4] = 3.18
+
+	       *[5] = 3.19
+
+	       *[6] = 3.2
+
+	       *[7] = 3.21
+
+	       *[8] = 3.22
+
+	       *[9] = 3.23
+
+		[10] = 192065215049390 (CANARY)
+
+	}
+}
+
+----------------------------------------------------------------------------------------------------
