@@ -56,8 +56,8 @@
 //!     #undef stack_t
 //!  @endcode
 //!
-//!  @todo Write logs for the only one file.
 //!  @todo Refactor resize function.
+//!  @todo Make func: stackEmpty(), closeStackLog()
 //!
 //}============================================================================
 
