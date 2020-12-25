@@ -102,7 +102,7 @@
   
    ```#deifne LOG_FILE_NAME file_name``` - sets log file name as file_name;
    
-   **LOG_FILE_NAME sets on first including of stack and cang ce changed**
+   **Warning:** LOG_FILE_NAME sets on first including of stack and cang ce changed.
   
    
     
