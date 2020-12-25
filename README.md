@@ -93,10 +93,15 @@
                     
   ## How to use protection and logs      
   All stacks including with protect and logs, you can turn off it if you dont need it. Use 
+  
   ```#define NO_LOG```        - to disable logs;
+  
   ```#deifne NO_PROTECTION``` - to disable protection (check at the beginning of each function that the stack is correct, for example size <= capacity or hash does not change since the last function call);
+  
   Also you can set log file name, use
+  
    ```#deifne LOG_FILE_NAME file_name``` - sets log file name as file_name;
+   
    **LOG_FILE_NAME sets on first including of stack and cang ce changed**
   
    
