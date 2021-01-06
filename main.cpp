@@ -15,4 +15,5 @@ int main() {
 
     stack_dtor (&stk);
     fclose (LOG_FILE_PTR);
+    return 0;
 }
