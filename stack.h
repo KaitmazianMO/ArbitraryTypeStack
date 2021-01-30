@@ -838,13 +838,13 @@ ON_PROTECTION_MODE (
 
 
 ON_FIRST_RUN (
-static bool canary_value_error (canary_t *canary)
-    {
-    for (size_t i = 0; 4*i < sizeof (canary_t); ++i)
-        if (*((int *)canary + i) != (int)canary)  return 1;
+               static bool canary_value_error (canary_t *canary)
+                   {
+                   for (size_t i = 0; 4*i < sizeof (canary_t); ++i)
+                       if (*((int *)canary + i) != (int)canary)  return 1;
 
-    return 0;
-    }
+                   return 0;
+                   }
              )
 
 static int hash_error (stack *stack_ptr)
