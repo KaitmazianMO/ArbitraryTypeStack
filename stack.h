@@ -690,15 +690,15 @@ static void setPoisonValue (stack_t* poison, size_t psize) {
 
 static void setCanaries (stack* stack_ptr) {
 ON_PROTECTION_MODE (
-        canary_t *frontStackCanary     = &stack_ptr->frontCanary;
-        canary_t *backStackCanary      = &stack_ptr->backCanary;
-        canary_t *frontDataStackCanary = ((canary_t *)stack_ptr->data - 1);
-        canary_t *backDataStackCanary  = (canary_t *)(stack_ptr->data + stack_ptr->capacity);
+                     canary_t *frontStackCanary     = &stack_ptr->frontCanary;
+                     canary_t *backStackCanary      = &stack_ptr->backCanary;
+                     canary_t *frontDataStackCanary = ((canary_t *)stack_ptr->data - 1);
+                     canary_t *backDataStackCanary  = (canary_t *)(stack_ptr->data + stack_ptr->capacity);
 
-        setCanaryValue (frontStackCanary);    
-        setCanaryValue (backStackCanary);      
-        setCanaryValue (frontDataStackCanary); 
-        setCanaryValue (backDataStackCanary); 
+                     setCanaryValue (frontStackCanary);    
+                     setCanaryValue (backStackCanary);      
+                     setCanaryValue (frontDataStackCanary); 
+                     setCanaryValue (backDataStackCanary); 
                     )
 }
 
@@ -824,21 +824,16 @@ static int stack_error (stack *stack_ptr)
 static int canary_error (stack *stack_ptr)
     {
 ON_PROTECTION_MODE (
-    canary_t *frontDataStackCanary = ((canary_t *)stack_ptr->data - 1);
-    canary_t *backDataStackCanary  = (canary_t *)(stack_ptr->data +  stack_ptr->capacity);
-    canary_t *frontStackCanary     = &stack_ptr->frontCanary;
-    canary_t *backStackCanary      = &stack_ptr->backCanary;
-
-    printf ("frontCanary ret: %d\n",     canary_value_error (frontStackCanary));
-    printf ("backCanary ret: %d\n",      canary_value_error (backStackCanary));
-    printf ("frontDataCanary ret: %d\n", canary_value_error (frontDataStackCanary));
-    printf ("backDataCanary ret: %d\n",  canary_value_error (backDataStackCanary));
-
-    ON_PROTECTION_MODE ( catch (canary_value_error (frontStackCanary),     FRONT_STACK_CANARY_ERROR); )           
-    ON_PROTECTION_MODE ( catch (canary_value_error (backStackCanary),      BACK_STACK_CANARY_ERROR);  )
-    ON_PROTECTION_MODE ( catch (canary_value_error (frontDataStackCanary), FRONT_DATA_CANARY_ERROR);  )
-    ON_PROTECTION_MODE ( catch (canary_value_error (backDataStackCanary),  BACK_DATA_CANARY_ERROR);   )
-                    )
+                     canary_t *frontDataStackCanary = ((canary_t *)stack_ptr->data - 1);
+                     canary_t *backDataStackCanary  = (canary_t *)(stack_ptr->data +  stack_ptr->capacity);
+                     canary_t *frontStackCanary     = &stack_ptr->frontCanary;
+                     canary_t *backStackCanary      = &stack_ptr->backCanary;
+         
+                     ON_PROTECTION_MODE ( catch (canary_value_error (frontStackCanary),     FRONT_STACK_CANARY_ERROR); )           
+                     ON_PROTECTION_MODE ( catch (canary_value_error (backStackCanary),      BACK_STACK_CANARY_ERROR);  )
+                     ON_PROTECTION_MODE ( catch (canary_value_error (frontDataStackCanary), FRONT_DATA_CANARY_ERROR);  )
+                     ON_PROTECTION_MODE ( catch (canary_value_error (backDataStackCanary),  BACK_DATA_CANARY_ERROR);   )
+                   )
     return NO_ERROR;
     }
 
