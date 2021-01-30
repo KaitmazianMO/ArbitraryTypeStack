@@ -477,7 +477,7 @@ ON_LOG_MODE (                                                                   
                                     "{\n"                                                               \
                                     "\tsize     = %d\n"                                                 \
                                     "\tcapasity = %d\n"                                                 \
-                                    "\tdata[%p]\n\t{\n",                                                \
+                                    "\tdata[%p]\n\t{",                                                  \
                                      stack_ptr->size,                                                   \
                                      stack_ptr->capacity,                                               \
                                      stack_ptr->data);                                                  \
