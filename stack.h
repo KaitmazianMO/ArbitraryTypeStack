@@ -675,7 +675,6 @@ ON_FIRST_RUN (
                    for (size_t i = 0; 4*i < sizeof (canary_t); ++i) 
                        *((int *)canary + i) = (int)canary;
 
-                   printf ("setCanary value: %lld\n", *canary);
                }
              )
 
@@ -922,5 +921,7 @@ ON_FIRST_RUN (
 #undef stack_t
 #undef canary_t
 #undef ON_PROTECTION_MODE
+#undef NO_LOG
+#undef NO_PROTECTION
 #undef ONLOG_MODE
 #define ANOTHER_STACK    //!< Used by other stack types to avoid double-inclusion errors.
