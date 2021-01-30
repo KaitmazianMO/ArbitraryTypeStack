@@ -45,13 +45,12 @@
 #endif
 
 ON_FIRST_RUN (
-               FILE *LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w");    //!<  Pointer to log file.
+               FILE *LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w");   
 
                typedef long long canary_t;     
-               static const canary_t CHIRP = 0xAEAEAAEAAEAE;       //!<  Right canaries value.   
 
-               int stk_err = 0;    //!<  Number of last stack error, only one for every stack.
-               const char *POISON = "POISON";    //!< Variable value for creating stack_poison.
+               int stk_err = 0;    
+               const char *POISON = "POISON";    //!< Variable value for creating stack poison.
              )
 
 #ifndef stack_t 
@@ -62,6 +61,8 @@ ON_FIRST_RUN (
 #define cat( struct_, separator, type )  struct_##separator##type   
 #define declare( struct_, type )         cat (struct_, _, type)     
 #define stack                            declare (stack, stack_t)   
+#define stack_poison                     declare (stack_t, stack_poison)
+
 
 struct stack
     {
@@ -271,6 +272,8 @@ static int      stack_resize_        (stack *stack_ptr, int new_capacity, int si
 static int      close_log_file();
                                  
 static void     setPoisonValue       (stack_t *poison, size_t psize);
+static void     setCanaryValue       (canary_t *canary);
+static void     setCanaries          (stack *stack_ptr);
 
 //{----------------------------------------------------------------------------
 //!  Sets poison for items coming after size.
@@ -340,7 +343,7 @@ static void        print_line        (FILE * file);
 //!
 //!  @return true if canary is OK, otherwise false.
 //}----------------------------------------------------------------------------
-static bool        is_dead           (canary_t canary);
+static bool        canary_value_error (canary_t *canary);
 
 
 
@@ -519,17 +522,14 @@ static int stack_ctor_ (stack *stack_ptr, int capacity, info func_info)
         stack_ptr->data = (stack_t *)(new_stack_ptr_data 
                                       ON_PROTECTION_MODE ( + sizeof (canary_t) ));
 
-    setPoisonValue (&stack_ptr->poison, sizeof (stack_t));
-
-    ON_PROTECTION_MODE ( stack_ptr->frontCanary                      = CHIRP; )
-    ON_PROTECTION_MODE ( *((canary_t *)stack_ptr->data - 1)          = CHIRP; ) 
-    ON_PROTECTION_MODE ( *((canary_t *)(stack_ptr->data + capacity)) = CHIRP; )
-    ON_PROTECTION_MODE ( stack_ptr->backCanary                       = CHIRP; )
-
     stack_ptr->capacity = capacity;
     stack_ptr->size     = 0;
 
+    ON_PROTECTION_MODE ( setCanaries (stack_ptr); )
+
+    setPoisonValue (&stack_ptr->poison, sizeof (stack_t));
     add_poison (stack_ptr);
+
     SetHashes  (stack_ptr)
     EndVerify
     StackDump
@@ -622,14 +622,11 @@ static int stack_resize_ (stack *stack_ptr, int new_capacity, int size_value, in
         stack_ptr->data     = (stack_t *)(new_data ON_PROTECTION_MODE ( + sizeof (canary_t) ));
         stack_ptr->capacity = new_capacity;
 
-        ON_PROTECTION_MODE ( stack_ptr->frontCanary  = CHIRP; )
-        ON_PROTECTION_MODE ( stack_ptr->backCanary   = CHIRP; )
-
-        ON_PROTECTION_MODE ( *((canary_t *)stack_ptr->data - 1)              = CHIRP; )
-        ON_PROTECTION_MODE ( *((canary_t *)(stack_ptr->data + new_capacity)) = CHIRP; )
+        ON_PROTECTION_MODE ( setCanaries (stack_ptr); )
         add_poison (stack_ptr);
         }
 
+    StackDump
     EndVerify
     return NO_ERROR;
     }
@@ -666,20 +663,43 @@ static stack *stack_dtor_ (stack *stack_ptr, info func_info)
     }
 
 //-----------------------------------------------------------------------------
-ON_FIRST_RUN (
-static int      close_log_file () {
-    return LOG_FILE_PTR && fclose (LOG_FILE_PTR);
-}            
-             )
 
+ON_FIRST_RUN (
+               static int close_log_file () {
+                   return LOG_FILE_PTR && fclose (LOG_FILE_PTR);
+               }            
+
+//-----------------------------------------------------------------------------
+
+               static void setCanaryValue (canary_t *canary) {
+                   for (size_t i = 0; 4*i < sizeof (canary_t); ++i) 
+                       *((int *)canary + i) = (int)canary;
+
+                   printf ("setCanary value: %lld\n", *canary);
+               }
+             )
 
 //-----------------------------------------------------------------------------
 
 static void setPoisonValue (stack_t* poison, size_t psize) {
-    const char poison_part = (char)POISON;
+    const char poison_part = (const char)POISON;
     
     for (size_t i = 0; i < psize; ++i)
         *((char *)poison + i) = poison_part;
+}
+
+static void setCanaries (stack* stack_ptr) {
+ON_PROTECTION_MODE (
+        canary_t *frontStackCanary     = &stack_ptr->frontCanary;
+        canary_t *backStackCanary      = &stack_ptr->backCanary;
+        canary_t *frontDataStackCanary = ((canary_t *)stack_ptr->data - 1);
+        canary_t *backDataStackCanary  = (canary_t *)(stack_ptr->data + stack_ptr->capacity);
+
+        setCanaryValue (frontStackCanary);    
+        setCanaryValue (backStackCanary);      
+        setCanaryValue (frontDataStackCanary); 
+        setCanaryValue (backDataStackCanary); 
+                    )
 }
 
 //-----------------------------------------------------------------------------
@@ -803,14 +823,35 @@ static int stack_error (stack *stack_ptr)
 
 static int canary_error (stack *stack_ptr)
     {
-    ON_PROTECTION_MODE ( catch (is_dead   (stack_ptr->frontCanary),           FRONT_STACK_CANARY_ERROR); )           
-    ON_PROTECTION_MODE ( catch (is_dead   (stack_ptr->backCanary),            BACK_STACK_CANARY_ERROR);  )
+ON_PROTECTION_MODE (
+    canary_t *frontDataStackCanary = ((canary_t *)stack_ptr->data - 1);
+    canary_t *backDataStackCanary  = (canary_t *)(stack_ptr->data +  stack_ptr->capacity);
+    canary_t *frontStackCanary     = &stack_ptr->frontCanary;
+    canary_t *backStackCanary      = &stack_ptr->backCanary;
 
-    ON_PROTECTION_MODE ( catch (is_dead (*((canary_t *)stack_ptr->data - 1)), FRONT_DATA_CANARY_ERROR);  )
-    ON_PROTECTION_MODE ( catch (is_dead (*(canary_t *)(stack_ptr->data +                                              
-                                                       stack_ptr->capacity)), FRONT_DATA_CANARY_ERROR);  )
+    printf ("frontCanary ret: %d\n",     canary_value_error (frontStackCanary));
+    printf ("backCanary ret: %d\n",      canary_value_error (backStackCanary));
+    printf ("frontDataCanary ret: %d\n", canary_value_error (frontDataStackCanary));
+    printf ("backDataCanary ret: %d\n",  canary_value_error (backDataStackCanary));
+
+    ON_PROTECTION_MODE ( catch (canary_value_error (frontStackCanary),     FRONT_STACK_CANARY_ERROR); )           
+    ON_PROTECTION_MODE ( catch (canary_value_error (backStackCanary),      BACK_STACK_CANARY_ERROR);  )
+    ON_PROTECTION_MODE ( catch (canary_value_error (frontDataStackCanary), FRONT_DATA_CANARY_ERROR);  )
+    ON_PROTECTION_MODE ( catch (canary_value_error (backDataStackCanary),  BACK_DATA_CANARY_ERROR);   )
+                    )
     return NO_ERROR;
     }
+
+
+ON_FIRST_RUN (
+static bool canary_value_error (canary_t *canary)
+    {
+    for (size_t i = 0; 4*i < sizeof (canary_t); ++i)
+        if (*((int *)canary + i) != (int)canary)  return 1;
+
+    return 0;
+    }
+             )
 
 static int hash_error (stack *stack_ptr)
     {
@@ -843,6 +884,7 @@ ON_FIRST_RUN (
                    CASE (FRONT_STACK_CANARY_ERROR)
                    CASE (BACK_STACK_CANARY_ERROR)
                    CASE (FRONT_DATA_CANARY_ERROR)
+                   CASE (BACK_DATA_CANARY_ERROR)
                    CASE (STACK_HASH_ERROR)
                    CASE (STACK_DATA_HASH_ERROR)
                    CASE (POISON_ERROR)
@@ -856,11 +898,6 @@ ON_FIRST_RUN (
                    CASE (NO_ERROR)
 
                    DEFAULT (UNKNOWN_ERROR)
-                   }
-        
-               bool is_dead (canary_t canary)
-                   {
-                   return (canary != CHIRP) ? true : false;
                    }
 
                void print_line(FILE * file)
