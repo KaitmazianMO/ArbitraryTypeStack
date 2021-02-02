@@ -61,8 +61,6 @@ ON_FIRST_RUN (
 #define cat( struct_, separator, type )  struct_##separator##type   
 #define declare( struct_, type )         cat (struct_, _, type)     
 #define stack                            declare (stack, stack_t)   
-#define stack_poison                     declare (stack_t, stack_poison)
-
 
 struct stack
     {
