@@ -40,17 +40,15 @@
 
 
 #ifndef LOG_FILE_NAME
-    //! Name of file for logs.
     #define LOG_FILE_NAME  "LogStack.txt"      
 #endif
 
-ON_FIRST_RUN (
-               FILE *LOG_FILE_PTR = fopen (LOG_FILE_NAME, "w");   
-
+ON_FIRST_RUN (   
                typedef long long canary_t;     
 
-               int stk_err = 0;    
-               const char *POISON = "POISON";    //!< Variable value for creating stack poison.
+               FILE*      LOG_FILE_PTR = fopen(LOG_FILE_NAME, "w");
+               int        stk_err      = 0;    
+               const char POISON       = (const char)"POISON";    //!< Variable value for creating stack poison.
              )
 
 #ifndef stack_t 
@@ -61,6 +59,7 @@ ON_FIRST_RUN (
 #define cat( struct_, separator, type )  struct_##separator##type   
 #define declare( struct_, type )         cat (struct_, _, type)     
 #define stack                            declare (stack, stack_t)   
+
 
 struct stack
     {
@@ -663,27 +662,29 @@ static stack *stack_dtor_ (stack *stack_ptr, info func_info)
 //-----------------------------------------------------------------------------
 
 ON_FIRST_RUN (
-               static int close_log_file () {
+               static int close_log_file () 
+                   {
                    return LOG_FILE_PTR && fclose (LOG_FILE_PTR);
-               }            
+                   }            
 
 //-----------------------------------------------------------------------------
 
-               static void setCanaryValue (canary_t *canary) {
+               static void setCanaryValue (canary_t *canary) 
+                   {
                    for (size_t i = 0; 4*i < sizeof (canary_t); ++i) 
                        *((int *)canary + i) = (int)canary;
-
-               }
+                   }
              )
 
 //-----------------------------------------------------------------------------
 
-static void setPoisonValue (stack_t* poison, size_t psize) {
-    const char poison_part = (const char)POISON;
+static void setPoisonValue (stack_t* poison, size_t psize) 
+    {
+    const char poison_part = POISON;
     
     for (size_t i = 0; i < psize; ++i)
         *((char *)poison + i) = poison_part;
-}
+    }
 
 static void setCanaries (stack* stack_ptr) {
 ON_PROTECTION_MODE (
