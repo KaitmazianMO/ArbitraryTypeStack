@@ -680,10 +680,8 @@ ON_FIRST_RUN (
 
 static void setPoisonValue (stack_t* poison, size_t psize) 
     {
-    const char poison_part = POISON;
-    
     for (size_t i = 0; i < psize; ++i)
-        *((char *)poison + i) = poison_part;
+        *((char *)poison + i) = POISON;
     }
 
 static void setCanaries (stack* stack_ptr) {
