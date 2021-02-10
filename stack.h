@@ -46,9 +46,9 @@
 ON_FIRST_RUN (   
                typedef long long canary_t;     
 
-               FILE*      LOG_FILE_PTR = fopen(LOG_FILE_NAME, "w");
-               int        stk_err      = 0;    
-               const char POISON       = (const char)"POISON";    //!< Variable value for creating stack poison.
+               static FILE*      LOG_FILE_PTR = fopen(LOG_FILE_NAME, "w");
+               static int        stk_err      = 0;    
+               static const char POISON       = (const char)"POISON";    //!< Variable value for creating stack poison.
              )
 
 #ifndef stack_t 
@@ -340,7 +340,12 @@ static void        print_line        (FILE * file);
 //!
 //!  @return true if canary is OK, otherwise false.
 //}----------------------------------------------------------------------------
+
 static bool        canary_value_error (canary_t *canary);
+
+static int         stack_data_hash_error (stack *stack_ptr);
+
+static int         stack_hash_error (stack *stack_ptr);
 
 
 
@@ -778,7 +783,7 @@ static int stack_hash_error (stack *stack_ptr)
     return 0;
     }
 
-int stack_data_hash_error (stack *stack_ptr)
+static int stack_data_hash_error (stack *stack_ptr)
     {
     ON_PROTECTION_MODE ( 
                          if (stack_ptr->stack_data_hash != get_stack_data_hash (stack_ptr))
